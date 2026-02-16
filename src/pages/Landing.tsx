@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useLanguage, languages } from '@/contexts/LanguageContext';
-import { Heart, Users, Shield, ArrowRight, MessageCircle, CheckCircle, Sparkles, Eye, Check, MapPin, Calendar, Lock, Globe } from 'lucide-react';
+import { Heart, Users, Shield, ArrowRight, MessageCircle, CheckCircle, Sparkles, Eye, Check, MapPin, Calendar, Lock, Globe, LogIn } from 'lucide-react';
 import kindlyLogo from '@/assets/kindly-logo.png';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -124,6 +124,15 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <img src={kindlyLogo} alt="Kindly" className="h-10 md:h-14" />
           <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/auth')}
+              className="gap-2"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign in
+            </Button>
             <Button 
               variant="ghost" 
               size="sm" 
@@ -504,6 +513,16 @@ export default function Landing() {
                 <p className="text-xs text-muted-foreground mt-6">
                   Your information is kept private and never shared.
                 </p>
+                <p className="text-sm text-muted-foreground mt-4">
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/auth')}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Sign in
+                  </button>
+                </p>
               </>
             ) : (
               <div className="py-8">
@@ -513,9 +532,13 @@ export default function Landing() {
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
                   Request Received
                 </h2>
-                <p className="text-muted-foreground max-w-md mx-auto">
+                <p className="text-muted-foreground max-w-md mx-auto mb-6">
                   Thank you for your interest in becoming a Founding Co-Parent Candidate. We'll review your application and reach out soon with next steps.
                 </p>
+                <Button variant="outline" onClick={() => navigate('/auth')} className="gap-2">
+                  <LogIn className="w-4 h-4" />
+                  Sign in
+                </Button>
               </div>
             )}
           </motion.div>
