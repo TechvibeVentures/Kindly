@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ const passwordSchema = z.string().min(6, 'Password must be at least 6 characters
 
 export default function Auth() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const invitationCode = searchParams.get('invite');
   
@@ -35,13 +36,8 @@ export default function Auth() {
       
       // If user is already logged in and has an invitation code, check if they've already signed up with this invitation
       if (session && invitationCode) {
-        // Check if this invitation was already accepted by this user
-        const { data: inviteData } = await supabase
-          .from('invitations')
-          .select('accepted_by, status')
-          .eq('code', invitationCode)
-          .maybeSingle();
-        
+        const { data: inviteRows } = await supabase.rpc('get_invitation_by_code', { invite_code: invitationCode });
+        const inviteData = Array.isArray(inviteRows) ? inviteRows[0] : null;
         if (inviteData?.accepted_by === session.user.id || inviteData?.status === 'accepted') {
           // User already signed up with this invitation, redirect to their dashboard
           checkOnboardingAndRedirect(session.user.id);
@@ -91,6 +87,21 @@ export default function Auth() {
   }, [invitationCode, searchParams]);
 
   useEffect(() => {
+    // Check for expired OTP in hash (Supabase redirects here when confirmation link expires)
+    const hash = window.location.hash.slice(1);
+    const hashParams = new URLSearchParams(hash);
+    const fromOtpExpired = (location.state as { otpExpired?: boolean })?.otpExpired;
+    if (hashParams.get('error_code') === 'otp_expired' || fromOtpExpired) {
+      toast({
+        title: 'Link expired',
+        description: 'Your confirmation link has expired. Your account was created—please sign in with your email and password.',
+        variant: 'default'
+      });
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      setIsLogin(true);
+      return;
+    }
+
     // Check for email in URL (from email confirmation)
     const emailParam = searchParams.get('email');
     if (emailParam) {
@@ -105,31 +116,20 @@ export default function Auth() {
     try {
       // Check if user is already logged in
       const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        // User is logged in - check if they've already accepted this invitation
-        const { data: inviteData } = await supabase
-          .from('invitations')
-          .select('*')
-          .eq('code', code)
-          .maybeSingle();
-        
-        if (inviteData?.accepted_by === session.user.id || inviteData?.status === 'accepted') {
-          // Already accepted, redirect to dashboard
+
+      // Use RPC - direct SELECT on invitations is blocked by RLS for non-admins
+      const { data: inviteRows, error } = await supabase.rpc('get_invitation_by_code', { invite_code: code });
+      const data = Array.isArray(inviteRows) ? inviteRows[0] : null;
+
+      if (session && data) {
+        if (data.accepted_by === session.user.id || data.status === 'accepted') {
+          // Already accepted by this user, redirect to dashboard
           checkOnboardingAndRedirect(session.user.id);
           return;
         }
-        // User is logged in but hasn't accepted this invitation - switch to signup mode
+        // Logged in but invitation is pending - show signup form
         setIsLogin(false);
       }
-
-      const { data, error } = await supabase
-        .from('invitations')
-        .select('*')
-        .eq('code', code)
-        .in('status', ['pending', 'accepted']) // Allow checking accepted invitations too
-        .gt('expires_at', new Date().toISOString())
-        .maybeSingle();
 
       if (error) {
         console.error('Invitation validation error:', error);
@@ -260,19 +260,12 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // If signing up with invitation, validate invitation first
+      // If signing up with invitation, validate invitation first (use RPC - direct SELECT blocked by RLS)
       if (!isLogin && invitationCode) {
         if (!invitation) {
-          // Try to validate invitation again
-          const { data: inviteData, error: inviteError } = await supabase
-            .from('invitations')
-            .select('*')
-            .eq('code', invitationCode)
-            .eq('status', 'pending')
-            .gt('expires_at', new Date().toISOString())
-            .maybeSingle();
-
-          if (inviteError || !inviteData) {
+          const { data: inviteRows, error: inviteError } = await supabase.rpc('get_invitation_by_code', { invite_code: invitationCode });
+          const inviteData = Array.isArray(inviteRows) && inviteRows.length > 0 ? inviteRows[0] : null;
+          if (inviteError || !inviteData || inviteData.status !== 'pending') {
             throw new Error('This invitation link is invalid or has expired. Please request a new invitation.');
           }
           setInvitation(inviteData);
@@ -335,16 +328,9 @@ export default function Auth() {
             });
         }
 
-        // Mark invitation as accepted
-        if (invitation && data.user) {
-          await supabase
-            .from('invitations')
-            .update({
-              status: 'accepted',
-              accepted_by: data.user.id,
-              accepted_at: new Date().toISOString()
-            })
-            .eq('id', invitation.id);
+        // Mark invitation as accepted (use RPC - direct UPDATE blocked by RLS for non-admins)
+        if (invitation && data.user && data.session && invitationCode) {
+          await supabase.rpc('accept_invitation', { invite_code: invitationCode });
         }
 
         // If session is available (email confirmation disabled), redirect immediately
@@ -368,6 +354,9 @@ export default function Auth() {
             
             if (signInData?.session && signInData.user) {
               // Successfully logged in - email confirmation not required
+              if (invitationCode) {
+                await supabase.rpc('accept_invitation', { invite_code: invitationCode });
+              }
               toast({
                 title: 'Account created!',
                 description: 'Welcome to Kindly. Redirecting to onboarding...'

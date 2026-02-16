@@ -1,5 +1,9 @@
 project_id = "tihsuwdvmwmgzjrelepr"
 
+[auth.email]
+# Email OTP/magic link expiry in seconds. 86400 = 1 day (max).
+otp_expiry = 86400
+
 [functions.send-invitation]
 verify_jwt = false
 

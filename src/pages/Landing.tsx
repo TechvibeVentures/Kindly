@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,15 @@ export default function Landing() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
   const { language, setLanguage } = useLanguage();
+
+  // When Supabase redirects here with expired confirmation link, send to Auth page
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    const hashParams = new URLSearchParams(hash);
+    if (hashParams.get('error_code') === 'otp_expired') {
+      navigate('/auth', { replace: true, state: { otpExpired: true } });
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
