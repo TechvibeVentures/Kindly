@@ -74,6 +74,24 @@ export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
   // DB has drinking, profession (occupation may also exist)
   const occupation = profile.occupation || (profile as any).profession || '';
 
+  // Core values: DB stores in 'qualities' (onboarding), 'values' may also exist
+  const values = (profile as any).qualities || profile.values || [];
+
+  // Involvement/custody: DB has involvement_percent (number); format as "60/40 custody" etc.
+  const formatInvolvement = (pct: number | null | undefined): string => {
+    if (pct == null) return '';
+    if (pct === 50) return '50/50 custody';
+    if (pct === 60) return '60/40 custody';
+    if (pct === 40) return '40/60 custody';
+    if (pct === 70) return '70/30 custody';
+    if (pct === 30) return '30/70 custody';
+    return `${pct}/${100 - pct} custody`;
+  };
+  const involvement =
+    profile.involvement ||
+    formatInvolvement((profile as any).involvement_percent) ||
+    '';
+
   return {
     id: profile.id,
     firstName,
@@ -88,9 +106,9 @@ export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
     bio: profile.bio || '',
     lookingFor,
     vision: profile.vision || '',
-    values: profile.values || [],
+    values,
     parentingPhilosophy: profile.parenting_philosophy || '',
-    involvement: profile.involvement || '',
+    involvement,
     involvementFlexibility: profile.involvement_flexibility || '',
     preferredMethod: 'open',
     openToRelocation: profile.open_to_relocation || false,

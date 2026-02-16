@@ -135,11 +135,11 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
             <p className="text-xs text-foreground/80 leading-relaxed line-clamp-2">{candidate.bio}</p>
           )}
 
-          {/* Core Values - only when exist */}
+          {/* Core Values (Creativity, Health, Balance etc.) - only when exist */}
           {candidate.values && candidate.values.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {candidate.values.slice(0, 3).map((value) => (
-                <span key={value} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
+                <span key={value} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white border border-border text-[10px] text-[#7B91A5]">
                   {value}
                 </span>
               ))}
@@ -248,11 +248,11 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
           <p className="text-foreground/80 leading-relaxed line-clamp-2">{candidate.bio}</p>
         )}
 
-        {/* Core Values - only when exist */}
+        {/* Core Values (Creativity, Health, Balance etc.) - only when exist */}
         {candidate.values && candidate.values.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {candidate.values.slice(0, 3).map((value) => (
-              <span key={value} className="kindly-chip">
+              <span key={value} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-border text-xs text-[#7B91A5]">
                 {value}
               </span>
             ))}
