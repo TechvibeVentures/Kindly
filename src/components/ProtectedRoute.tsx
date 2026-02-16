@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
 /**
  * ProtectedRoute component that handles route access based on user roles
  * - requireAdmin: Only admins can access
- * - requireUser: Only regular users (not admins) can access
+ * - requireUser: Any authenticated user (including admins) can access
  * - Neither: Anyone authenticated can access
  */
 export function ProtectedRoute({ children, requireAdmin = false, requireUser = false }: ProtectedRouteProps) {
@@ -38,15 +38,8 @@ export function ProtectedRoute({ children, requireAdmin = false, requireUser = f
         navigate('/discover');
         return;
       }
-
-      // Require regular user but user is admin
-      // Exception: always allow admins to access onboarding (for testing and new admin onboarding)
-      if (requireUser && isAdmin && location.pathname !== '/onboarding') {
-        navigate('/admin');
-        return;
-      }
     }
-  }, [user, isLoading, isAdmin, requireAdmin, requireUser, navigate, location.pathname]);
+  }, [user, isLoading, isAdmin, requireAdmin, navigate, location.pathname]);
 
   if (isLoading) {
     return (
@@ -66,11 +59,6 @@ export function ProtectedRoute({ children, requireAdmin = false, requireUser = f
   }
 
   if (requireAdmin && !isAdmin) {
-    return null; // Will redirect
-  }
-
-  // Allow admins to access onboarding even if requireUser is true
-  if (requireUser && isAdmin && location.pathname !== '/onboarding') {
     return null; // Will redirect
   }
 

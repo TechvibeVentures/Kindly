@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ResponsiveLayout } from "@/components/ResponsiveLayout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -26,6 +27,10 @@ import Settings from "./pages/Settings";
 import SafetyPrivacy from "./pages/SafetyPrivacy";
 import Notifications from "./pages/Notifications";
 import AccountSecurity from "./pages/AccountSecurity";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Help from "./pages/Help";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -43,6 +48,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LanguageProvider>
+          <AuthProvider>
           <AppProvider>
             <Toaster />
             <Sonner />
@@ -51,7 +57,7 @@ const App = () => {
                 <Route path="/" element={<Landing />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/onboarding" element={<ProtectedRoute requireUser><Onboarding /></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute requireAdmin><ResponsiveLayout><Admin /></ResponsiveLayout></ProtectedRoute>} />
                 <Route path="/discover" element={<ProtectedRoute requireUser><ResponsiveLayout><Discover /></ResponsiveLayout></ProtectedRoute>} />
                 <Route path="/resources" element={<ProtectedRoute requireUser><ResponsiveLayout><Resources /></ResponsiveLayout></ProtectedRoute>} />
                 <Route path="/resources/:slug" element={<ProtectedRoute requireUser><ResponsiveLayout><ResourceDetail /></ResponsiveLayout></ProtectedRoute>} />
@@ -68,10 +74,15 @@ const App = () => {
                 <Route path="/settings/safety-privacy" element={<ProtectedRoute requireUser><ResponsiveLayout><SafetyPrivacy /></ResponsiveLayout></ProtectedRoute>} />
                 <Route path="/settings/notifications" element={<ProtectedRoute requireUser><ResponsiveLayout><Notifications /></ResponsiveLayout></ProtectedRoute>} />
                 <Route path="/settings/account-security" element={<ProtectedRoute requireUser><ResponsiveLayout><AccountSecurity /></ResponsiveLayout></ProtectedRoute>} />
+                <Route path="/terms" element={<ResponsiveLayout><Terms /></ResponsiveLayout>} />
+                <Route path="/privacy" element={<ResponsiveLayout><Privacy /></ResponsiveLayout>} />
+                <Route path="/help" element={<ResponsiveLayout><Help /></ResponsiveLayout>} />
+                <Route path="/about" element={<ResponsiveLayout><About /></ResponsiveLayout>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
           </AppProvider>
+          </AuthProvider>
         </LanguageProvider>
       </TooltipProvider>
     </QueryClientProvider>

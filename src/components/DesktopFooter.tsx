@@ -25,7 +25,7 @@ export function DesktopFooter() {
           <div>
             <h4 className="font-semibold mb-4">{t.company}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">{t.aboutUs}</a></li>
+              <li><NavLink to="/about" className="hover:text-foreground transition-colors">{t.aboutUs}</NavLink></li>
               <li><a href="#" className="hover:text-foreground transition-colors">{t.blog}</a></li>
               <li><a href="#" className="hover:text-foreground transition-colors">{t.careers}</a></li>
               <li><a href="#" className="hover:text-foreground transition-colors">{t.contact}</a></li>
@@ -34,9 +34,9 @@ export function DesktopFooter() {
           <div>
             <h4 className="font-semibold mb-4">{t.legal}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground transition-colors">{t.privacyPolicy}</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">{t.termsOfService}</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">{t.cookiePolicy}</a></li>
+              <li><NavLink to="/privacy" className="hover:text-foreground transition-colors">{t.privacyPolicy}</NavLink></li>
+              <li><NavLink to="/terms" className="hover:text-foreground transition-colors">{t.termsOfService}</NavLink></li>
+              <li><NavLink to="/privacy" className="hover:text-foreground transition-colors">{t.cookiePolicy}</NavLink></li>
             </ul>
           </div>
         </div>

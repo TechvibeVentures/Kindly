@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Environment and secrets (never commit real keys)
+.env
+.env.local
+.env.*.local
+# Supabase
+supabase/.temp
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,10 +29,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-.vercel
-.env
-.env*.local
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local

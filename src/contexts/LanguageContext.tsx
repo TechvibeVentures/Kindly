@@ -44,6 +44,9 @@ type Translations = {
   profileComplete: string;
   viewsThisWeek: string;
   accountSettings: string;
+  appMode: string;
+  seekerLabel: string;
+  candidateLabel: string;
   shortlist: string;
   savedProfiles: string;
   safetyPrivacy: string;
@@ -121,7 +124,18 @@ type Translations = {
   dangerZone: string;
   deleteAccount: string;
   deleteAccountDesc: string;
-  
+  newPassword: string;
+  confirmPassword: string;
+  updatePassword: string;
+  newEmail: string;
+  updateEmail: string;
+  lastSignInLabel: string;
+  thisDevice: string;
+  signOutHere: string;
+  deleteAccountConfirm: string;
+  deleteAccountSuccess: string;
+  twoFactorComingSoon: string;
+
   // Resources
   learnAboutCoParenting: string;
   everythingYouNeed: string;
@@ -210,34 +224,6 @@ type Translations = {
   addLanguagesYouSpeak: string;
   addYourInterests: string;
   addCausesYouCareAbout: string;
-  // Profile Completion Wizard
-  completeProfile: string;
-  selectSectionsToComplete: string;
-  profileCompletion: string;
-  completeSectionsToImproveProfile: string;
-  thisSectionIsComplete: string;
-  clickToCompleteThisSection: string;
-  allSectionsCompleted: string;
-  jobTitle: string;
-  company: string;
-  degreeOrFieldOfStudy: string;
-  schoolOrUniversity: string;
-  searchForCity: string;
-  searchForHometown: string;
-  selectLanguages: string;
-  addMoreLanguages: string;
-  selectInterests: string;
-  addMoreInterests: string;
-  selectCauses: string;
-  addMoreCauses: string;
-  selectOptions: string;
-  changeSelection: string;
-  selectWhatYoureLookingFor: string;
-  describeYourApproachToParenting: string;
-  describeYourFinancialSituation: string;
-  describeYourDailyRhythmAndLifestyle: string;
-  saving: string;
-  continue: string;
   addValuesYouCareAbout: string;
   describeYourApproach: string;
   describeFinancialSituation: string;
@@ -484,6 +470,9 @@ const translations: Record<Language, Translations> = {
     profileComplete: 'Profile Complete',
     viewsThisWeek: 'Views this week',
     accountSettings: 'Account Settings',
+    appMode: 'I\'m using Kindly as',
+    seekerLabel: 'Seeker',
+    candidateLabel: 'Candidate',
     shortlist: 'Shortlist',
     savedProfiles: 'View your saved profiles',
     safetyPrivacy: 'Safety & Privacy',
@@ -561,7 +550,18 @@ const translations: Record<Language, Translations> = {
     dangerZone: 'Danger Zone',
     deleteAccount: 'Delete Account',
     deleteAccountDesc: 'Permanently delete your account and data',
-    
+    newPassword: 'New password',
+    confirmPassword: 'Confirm password',
+    updatePassword: 'Update password',
+    newEmail: 'New email',
+    updateEmail: 'Update email',
+    lastSignInLabel: 'Last sign-in',
+    thisDevice: 'This device',
+    signOutHere: 'Sign out',
+    deleteAccountConfirm: 'This will permanently delete your account and data. You will be signed out. This cannot be undone.',
+    deleteAccountSuccess: 'Your account has been deleted.',
+    twoFactorComingSoon: 'Coming soon',
+
     // Resources
     learnAboutCoParenting: 'Learn about co-parenting',
     everythingYouNeed: 'Everything you need to know about co-parenting',
@@ -606,7 +606,7 @@ const translations: Record<Language, Translations> = {
     bio: 'Bio',
     tellPeopleAboutYourself: 'Tell people about yourself...',
     aboutYou: 'About you',
-    work: 'Profession',
+    work: 'Work',
     education: 'Education',
     location: 'Location',
     hometown: 'Hometown',
@@ -614,7 +614,7 @@ const translations: Record<Language, Translations> = {
     interests: 'Interests',
     causesAndCommunities: 'Causes & Communities',
     coreValues: 'Core Values',
-    moreAboutYou: 'Characteristics',
+    moreAboutYou: 'More about you',
     height: 'Height',
     weight: 'Weight',
     exercise: 'Exercise',
@@ -769,31 +769,6 @@ const translations: Record<Language, Translations> = {
     // Desktop Footer
     product: 'Product',
     company: 'Company',
-    // Profile Completion Wizard
-    completeProfile: 'Complete Your Profile',
-    selectSectionsToComplete: 'Select sections to complete',
-    profileCompletion: 'Profile Completion',
-    completeSectionsToImproveProfile: 'Complete the sections below to improve your profile and get better matches.',
-    thisSectionIsComplete: 'This section is complete',
-    clickToCompleteThisSection: 'Click to complete this section',
-    allSectionsCompleted: 'All sections have been completed!',
-    jobTitle: 'Job title',
-    degreeOrFieldOfStudy: 'Degree or field of study',
-    schoolOrUniversity: 'School or university',
-    selectLanguages: 'Select languages',
-    addMoreLanguages: 'Add more languages',
-    selectInterests: 'Select interests',
-    addMoreInterests: 'Add more interests',
-    selectCauses: 'Select causes',
-    addMoreCauses: 'Add more causes',
-    selectOptions: 'Select options',
-    changeSelection: 'Change selection',
-    selectWhatYoureLookingFor: 'Select what you\'re looking for',
-    describeYourApproachToParenting: 'Describe your approach to parenting...',
-    describeYourFinancialSituation: 'Describe your financial situation...',
-    describeYourDailyRhythmAndLifestyle: 'Describe your daily rhythm and lifestyle...',
-    saving: 'Saving...',
-    continue: 'Continue',
     legal: 'Legal',
     howItWorks: 'How it Works',
     pricing: 'Pricing',
@@ -919,6 +894,9 @@ const translations: Record<Language, Translations> = {
     profileComplete: 'Profil vollständig',
     viewsThisWeek: 'Aufrufe diese Woche',
     accountSettings: 'Kontoeinstellungen',
+    appMode: 'Ich nutze Kindly als',
+    seekerLabel: 'Suchende/r',
+    candidateLabel: 'Kandidat/in',
     shortlist: 'Merkliste',
     savedProfiles: 'Gespeicherte Profile anzeigen',
     safetyPrivacy: 'Sicherheit & Datenschutz',
@@ -996,7 +974,18 @@ const translations: Record<Language, Translations> = {
     dangerZone: 'Gefahrenzone',
     deleteAccount: 'Konto löschen',
     deleteAccountDesc: 'Konto und Daten dauerhaft löschen',
-    
+    newPassword: 'Neues Passwort',
+    confirmPassword: 'Passwort bestätigen',
+    updatePassword: 'Passwort aktualisieren',
+    newEmail: 'Neue E-Mail',
+    updateEmail: 'E-Mail aktualisieren',
+    lastSignInLabel: 'Letzte Anmeldung',
+    thisDevice: 'Dieses Gerät',
+    signOutHere: 'Abmelden',
+    deleteAccountConfirm: 'Ihr Konto und Ihre Daten werden dauerhaft gelöscht. Sie werden abgemeldet. Dies kann nicht rückgängig gemacht werden.',
+    deleteAccountSuccess: 'Ihr Konto wurde gelöscht.',
+    twoFactorComingSoon: 'Demnächst verfügbar',
+
     // Resources
     learnAboutCoParenting: 'Über Co-Parenting lernen',
     everythingYouNeed: 'Alles, was Sie über Co-Parenting wissen müssen',
@@ -1205,31 +1194,6 @@ const translations: Record<Language, Translations> = {
     // Desktop Footer
     product: 'Produkt',
     company: 'Unternehmen',
-    // Profile Completion Wizard
-    completeProfile: 'Profil vervollständigen',
-    selectSectionsToComplete: 'Abschnitte zum Ausfüllen auswählen',
-    profileCompletion: 'Profil-Vervollständigung',
-    completeSectionsToImproveProfile: 'Vervollständigen Sie die folgenden Abschnitte, um Ihr Profil zu verbessern und bessere Matches zu erhalten.',
-    thisSectionIsComplete: 'Dieser Abschnitt ist vollständig',
-    clickToCompleteThisSection: 'Klicken Sie, um diesen Abschnitt zu vervollständigen',
-    allSectionsCompleted: 'Alle Abschnitte wurden vervollständigt!',
-    jobTitle: 'Berufsbezeichnung',
-    degreeOrFieldOfStudy: 'Abschluss oder Studienfach',
-    schoolOrUniversity: 'Schule oder Universität',
-    selectLanguages: 'Sprachen auswählen',
-    addMoreLanguages: 'Weitere Sprachen hinzufügen',
-    selectInterests: 'Interessen auswählen',
-    addMoreInterests: 'Weitere Interessen hinzufügen',
-    selectCauses: 'Anliegen auswählen',
-    addMoreCauses: 'Weitere Anliegen hinzufügen',
-    selectOptions: 'Optionen auswählen',
-    changeSelection: 'Auswahl ändern',
-    selectWhatYoureLookingFor: 'Wählen Sie, wonach Sie suchen',
-    describeYourApproachToParenting: 'Beschreiben Sie Ihren Ansatz zur Elternschaft...',
-    describeYourFinancialSituation: 'Beschreiben Sie Ihre finanzielle Situation...',
-    describeYourDailyRhythmAndLifestyle: 'Beschreiben Sie Ihren Tagesrhythmus und Lebensstil...',
-    saving: 'Speichern...',
-    continue: 'Weiter',
     legal: 'Rechtliches',
     howItWorks: 'Wie es funktioniert',
     pricing: 'Preise',
@@ -1355,6 +1319,9 @@ const translations: Record<Language, Translations> = {
     profileComplete: 'Profil complet',
     viewsThisWeek: 'Vues cette semaine',
     accountSettings: 'Paramètres du compte',
+    appMode: 'J\'utilise Kindly comme',
+    seekerLabel: 'Chercheur/se',
+    candidateLabel: 'Candidat/e',
     shortlist: 'Liste restreinte',
     savedProfiles: 'Voir vos profils sauvegardés',
     safetyPrivacy: 'Sécurité & Confidentialité',
@@ -1432,7 +1399,18 @@ const translations: Record<Language, Translations> = {
     dangerZone: 'Zone de danger',
     deleteAccount: 'Supprimer le compte',
     deleteAccountDesc: 'Supprimer définitivement votre compte et vos données',
-    
+    newPassword: 'Nouveau mot de passe',
+    confirmPassword: 'Confirmer le mot de passe',
+    updatePassword: 'Mettre à jour le mot de passe',
+    newEmail: 'Nouvelle adresse e-mail',
+    updateEmail: 'Mettre à jour l\'e-mail',
+    lastSignInLabel: 'Dernière connexion',
+    thisDevice: 'Cet appareil',
+    signOutHere: 'Se déconnecter',
+    deleteAccountConfirm: 'Votre compte et vos données seront définitivement supprimés. Vous serez déconnecté. Cette action est irréversible.',
+    deleteAccountSuccess: 'Votre compte a été supprimé.',
+    twoFactorComingSoon: 'Bientôt disponible',
+
     // Resources
     learnAboutCoParenting: 'En savoir plus sur la coparentalité',
     everythingYouNeed: 'Tout ce que vous devez savoir sur la coparentalité',
@@ -1641,31 +1619,6 @@ const translations: Record<Language, Translations> = {
     // Desktop Footer
     product: 'Produit',
     company: 'Entreprise',
-    // Profile Completion Wizard
-    completeProfile: 'Complétez votre profil',
-    selectSectionsToComplete: 'Sélectionnez les sections à compléter',
-    profileCompletion: 'Complétion du profil',
-    completeSectionsToImproveProfile: 'Complétez les sections ci-dessous pour améliorer votre profil et obtenir de meilleurs matchs.',
-    thisSectionIsComplete: 'Cette section est complète',
-    clickToCompleteThisSection: 'Cliquez pour compléter cette section',
-    allSectionsCompleted: 'Toutes les sections ont été complétées !',
-    jobTitle: 'Titre du poste',
-    degreeOrFieldOfStudy: 'Diplôme ou domaine d\'études',
-    schoolOrUniversity: 'École ou université',
-    selectLanguages: 'Sélectionner les langues',
-    addMoreLanguages: 'Ajouter plus de langues',
-    selectInterests: 'Sélectionner les intérêts',
-    addMoreInterests: 'Ajouter plus d\'intérêts',
-    selectCauses: 'Sélectionner les causes',
-    addMoreCauses: 'Ajouter plus de causes',
-    selectOptions: 'Sélectionner les options',
-    changeSelection: 'Changer la sélection',
-    selectWhatYoureLookingFor: 'Sélectionnez ce que vous recherchez',
-    describeYourApproachToParenting: 'Décrivez votre approche de la parentalité...',
-    describeYourFinancialSituation: 'Décrivez votre situation financière...',
-    describeYourDailyRhythmAndLifestyle: 'Décrivez votre rythme quotidien et votre style de vie...',
-    saving: 'Enregistrement...',
-    continue: 'Continuer',
     legal: 'Mentions légales',
     howItWorks: 'Comment ça marche',
     pricing: 'Tarifs',
@@ -1791,6 +1744,9 @@ const translations: Record<Language, Translations> = {
     profileComplete: 'Perfil completo',
     viewsThisWeek: 'Visitas esta semana',
     accountSettings: 'Configuración de la cuenta',
+    appMode: 'Uso Kindly como',
+    seekerLabel: 'Buscador/a',
+    candidateLabel: 'Candidato/a',
     shortlist: 'Lista de favoritos',
     savedProfiles: 'Ver perfiles guardados',
     safetyPrivacy: 'Seguridad y Privacidad',
@@ -1868,7 +1824,18 @@ const translations: Record<Language, Translations> = {
     dangerZone: 'Zona de peligro',
     deleteAccount: 'Eliminar cuenta',
     deleteAccountDesc: 'Eliminar permanentemente su cuenta y datos',
-    
+    newPassword: 'Nueva contraseña',
+    confirmPassword: 'Confirmar contraseña',
+    updatePassword: 'Actualizar contraseña',
+    newEmail: 'Nuevo correo electrónico',
+    updateEmail: 'Actualizar correo',
+    lastSignInLabel: 'Último inicio de sesión',
+    thisDevice: 'Este dispositivo',
+    signOutHere: 'Cerrar sesión',
+    deleteAccountConfirm: 'Se eliminarán permanentemente su cuenta y sus datos. Se cerrará la sesión. Esta acción no se puede deshacer.',
+    deleteAccountSuccess: 'Su cuenta ha sido eliminada.',
+    twoFactorComingSoon: 'Próximamente',
+
     // Resources
     learnAboutCoParenting: 'Aprender sobre coparentalidad',
     everythingYouNeed: 'Todo lo que necesita saber sobre coparentalidad',
@@ -2077,31 +2044,6 @@ const translations: Record<Language, Translations> = {
     // Desktop Footer
     product: 'Producto',
     company: 'Empresa',
-    // Profile Completion Wizard
-    completeProfile: 'Completa tu perfil',
-    selectSectionsToComplete: 'Selecciona secciones para completar',
-    profileCompletion: 'Finalización del perfil',
-    completeSectionsToImproveProfile: 'Completa las secciones a continuación para mejorar tu perfil y obtener mejores coincidencias.',
-    thisSectionIsComplete: 'Esta sección está completa',
-    clickToCompleteThisSection: 'Haz clic para completar esta sección',
-    allSectionsCompleted: '¡Todas las secciones han sido completadas!',
-    jobTitle: 'Título del trabajo',
-    degreeOrFieldOfStudy: 'Título o campo de estudio',
-    schoolOrUniversity: 'Escuela o universidad',
-    selectLanguages: 'Seleccionar idiomas',
-    addMoreLanguages: 'Agregar más idiomas',
-    selectInterests: 'Seleccionar intereses',
-    addMoreInterests: 'Agregar más intereses',
-    selectCauses: 'Seleccionar causas',
-    addMoreCauses: 'Agregar más causas',
-    selectOptions: 'Seleccionar opciones',
-    changeSelection: 'Cambiar selección',
-    selectWhatYoureLookingFor: 'Selecciona lo que buscas',
-    describeYourApproachToParenting: 'Describe tu enfoque de crianza...',
-    describeYourFinancialSituation: 'Describe tu situación financiera...',
-    describeYourDailyRhythmAndLifestyle: 'Describe tu ritmo diario y estilo de vida...',
-    saving: 'Guardando...',
-    continue: 'Continuar',
     legal: 'Legal',
     howItWorks: 'Cómo funciona',
     pricing: 'Precios',
@@ -2227,6 +2169,9 @@ const translations: Record<Language, Translations> = {
     profileComplete: 'Profilo completo',
     viewsThisWeek: 'Visite questa settimana',
     accountSettings: 'Impostazioni account',
+    appMode: 'Uso Kindly come',
+    seekerLabel: 'Cercatore/trice',
+    candidateLabel: 'Candidato/a',
     shortlist: 'Lista preferiti',
     savedProfiles: 'Visualizza i profili salvati',
     safetyPrivacy: 'Sicurezza e Privacy',
@@ -2304,7 +2249,18 @@ const translations: Record<Language, Translations> = {
     dangerZone: 'Zona pericolosa',
     deleteAccount: 'Elimina account',
     deleteAccountDesc: 'Elimina permanentemente account e dati',
-    
+    newPassword: 'Nuova password',
+    confirmPassword: 'Conferma password',
+    updatePassword: 'Aggiorna password',
+    newEmail: 'Nuova email',
+    updateEmail: 'Aggiorna email',
+    lastSignInLabel: 'Ultimo accesso',
+    thisDevice: 'Questo dispositivo',
+    signOutHere: 'Esci',
+    deleteAccountConfirm: 'Il tuo account e i tuoi dati saranno eliminati permanentemente. Verrai disconnesso. Questa azione non può essere annullata.',
+    deleteAccountSuccess: 'Il tuo account è stato eliminato.',
+    twoFactorComingSoon: 'Prossimamente',
+
     // Resources
     learnAboutCoParenting: 'Scopri la co-genitorialità',
     everythingYouNeed: 'Tutto ciò che devi sapere sulla co-genitorialità',
@@ -2513,31 +2469,6 @@ const translations: Record<Language, Translations> = {
     // Desktop Footer
     product: 'Prodotto',
     company: 'Azienda',
-    // Profile Completion Wizard
-    completeProfile: 'Completa il tuo profilo',
-    selectSectionsToComplete: 'Seleziona le sezioni da completare',
-    profileCompletion: 'Completamento del profilo',
-    completeSectionsToImproveProfile: 'Completa le sezioni seguenti per migliorare il tuo profilo e ottenere match migliori.',
-    thisSectionIsComplete: 'Questa sezione è completa',
-    clickToCompleteThisSection: 'Clicca per completare questa sezione',
-    allSectionsCompleted: 'Tutte le sezioni sono state completate!',
-    jobTitle: 'Titolo di lavoro',
-    degreeOrFieldOfStudy: 'Laurea o campo di studio',
-    schoolOrUniversity: 'Scuola o università',
-    selectLanguages: 'Seleziona lingue',
-    addMoreLanguages: 'Aggiungi più lingue',
-    selectInterests: 'Seleziona interessi',
-    addMoreInterests: 'Aggiungi più interessi',
-    selectCauses: 'Seleziona cause',
-    addMoreCauses: 'Aggiungi più cause',
-    selectOptions: 'Seleziona opzioni',
-    changeSelection: 'Cambia selezione',
-    selectWhatYoureLookingFor: 'Seleziona cosa stai cercando',
-    describeYourApproachToParenting: 'Descrivi il tuo approccio alla genitorialità...',
-    describeYourFinancialSituation: 'Descrivi la tua situazione finanziaria...',
-    describeYourDailyRhythmAndLifestyle: 'Descrivi il tuo ritmo quotidiano e stile di vita...',
-    saving: 'Salvataggio...',
-    continue: 'Continua',
     legal: 'Legale',
     howItWorks: 'Come funziona',
     pricing: 'Prezzi',

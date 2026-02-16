@@ -1,7 +1,4 @@
-project_id = "tihsuwdvmwmgzjrelepr"
+project_id = "jhcjxkswnyrkhmfrdomj"
 
 [functions.send-invitation]
-verify_jwt = false
-
-[functions.send-admin-invitation]
 verify_jwt = false

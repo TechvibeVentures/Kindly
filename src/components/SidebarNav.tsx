@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Compass, BookOpen, MessageCircle, User, Settings, LogOut } from 'lucide-react';
+import { Compass, BookOpen, MessageCircle, User, Settings, LogOut, Shield } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -7,8 +7,13 @@ import { useAuth } from '@/hooks/useAuth';
 export function SidebarNav() {
   const { userRole } = useApp();
   const { t } = useLanguage();
+  const { isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const seekerTabs = [
     { path: '/discover', icon: Compass, label: t.discover },
@@ -46,6 +51,23 @@ export function SidebarNav() {
           </NavLink>
         ))}
 
+        {/* Admin (only for admins) */}
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                isActive
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+              }`
+            }
+          >
+            <Shield className="w-4 h-4" />
+            <span>Admin</span>
+          </NavLink>
+        )}
+
         {/* Separator and Settings/Logout */}
         <div className="border-t border-border my-2" />
         <button 
@@ -56,9 +78,7 @@ export function SidebarNav() {
           <span>{t.settings}</span>
         </button>
         <button 
-          onClick={async () => {
-            await signOut();
-          }}
+          onClick={handleLogout}
           className="flex items-center gap-2 px-3 py-2.5 rounded-lg transition-all text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground w-full"
         >
           <LogOut className="w-4 h-4" />
