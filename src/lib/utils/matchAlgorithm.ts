@@ -62,20 +62,17 @@ export function calculateCompatibility(
   };
 
   let totalScore = 0;
-  let totalWeight = 0;
+  const totalWeight = 1; // Use full weight so missing data (0) penalizes the score
 
   Object.keys(factors).forEach((key) => {
     const factor = factors[key as keyof MatchFactors];
     const weight = weights[key as keyof typeof weights];
-    
-    // Only count factors that have a meaningful value (not -1 for "no data")
-    if (factor >= 0) {
-      totalScore += factor * weight;
-      totalWeight += weight;
-    }
+    // Treat -1 (no data) as 0 - incomplete profiles get lower scores
+    const score = factor >= 0 ? factor : 0;
+    totalScore += score * weight;
   });
 
-  // Normalize to 0-100 range
+  // Normalize to 0-100 range; missing data contributes 0, lowering the overall score
   const finalScore = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
   
   return Math.round(Math.min(100, Math.max(0, finalScore)));

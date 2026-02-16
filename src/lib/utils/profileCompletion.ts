@@ -44,7 +44,7 @@ export function calculateProfileCompletion(profile: ProfileData): number {
   // Basic onboarding fields (collected in 3-step onboarding)
   // These should account for ~30-35% of completion
   const basicOnboardingFields = [
-    profile.first_name || profile.display_name || profile.full_name, // First Name
+    profile.full_name || profile.first_name || profile.display_name, // First Name
     profile.birth_date, // Birth Date (YYYY-MM-DD format)
     profile.gender, // Gender
     profile.city, // City

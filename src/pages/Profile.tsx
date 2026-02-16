@@ -63,7 +63,7 @@ export default function Profile() {
                   ) : profile?.photo_url ? (
                     <img
                       src={profile.photo_url}
-                      alt={profile?.display_name || "Profile"}
+                      alt={profile?.full_name || profile?.first_name || profile?.display_name || "Profile"}
                       className="w-32 h-32 rounded-2xl object-cover border-4 border-border mx-auto"
                     />
                   ) : (
@@ -79,7 +79,7 @@ export default function Profile() {
                   </>
                 ) : (
                   <>
-                    <h2 className="text-2xl font-bold mt-4">{profile?.display_name || profile?.full_name || "Your Name"}</h2>
+                    <h2 className="text-2xl font-bold mt-4">{profile?.full_name || profile?.first_name || profile?.display_name || "Your Name"}</h2>
                     <p className="text-muted-foreground">{profile?.email || ""}</p>
                     {/* Progress bar beneath name (same as mobile) */}
                     <div className="mt-4 space-y-2">
@@ -189,7 +189,7 @@ export default function Profile() {
               ) : profile?.photo_url ? (
                 <img
                   src={profile.photo_url}
-                  alt={profile?.display_name || "Profile"}
+                  alt={profile?.full_name || profile?.first_name || profile?.display_name || "Profile"}
                   className="w-20 h-20 rounded-2xl object-cover border-2 border-border"
                 />
               ) : (
@@ -206,7 +206,7 @@ export default function Profile() {
                 </>
               ) : (
                 <>
-                  <h2 className="text-xl font-bold">{profile?.display_name || profile?.full_name || "Your Name"}</h2>
+                    <h2 className="text-xl font-bold">{profile?.full_name || profile?.first_name || profile?.display_name || "Your Name"}</h2>
                   {/* Progress bar beneath first name (mobile) */}
                   <div className="mt-2 space-y-1">
                     <div className="flex items-center gap-2">

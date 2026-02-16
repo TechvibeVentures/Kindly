@@ -46,8 +46,9 @@ interface Profile {
   id: string;
   user_id: string;
   email: string;
-  full_name: string | null;
-  display_name: string | null;
+  first_name?: string | null;
+  full_name?: string | null;
+  display_name?: string | null;
   onboarding_completed: boolean;
   created_at: string;
 }
@@ -388,6 +389,7 @@ export default function Admin() {
   const filteredProfiles = profiles.filter(
     (p) =>
       p.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.display_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -544,12 +546,12 @@ export default function Admin() {
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                             <span className="text-sm font-medium">
-                              {profile.display_name?.[0] || profile.full_name?.[0] || '?'}
+                              {profile.first_name?.[0] || profile.full_name?.[0] || profile.display_name?.[0] || '?'}
                             </span>
                           </div>
                           <div>
                             <p className="font-medium">
-                              {profile.display_name || profile.full_name || 'Unnamed'}
+                              {profile.full_name || profile.first_name || profile.display_name || 'Unnamed'}
                             </p>
                             <p className="text-xs text-muted-foreground md:hidden">
                               {profile.email}

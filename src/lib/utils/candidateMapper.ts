@@ -5,6 +5,7 @@
 
 import type { CandidateProfile } from '@/lib/db/candidates';
 import { calculateCompatibility } from './matchAlgorithm';
+import { calculateProfileCompletion } from './profileCompletion';
 
 export interface Candidate {
   id: string;
@@ -47,53 +48,61 @@ export interface Candidate {
   starSign?: string;
   pets?: string;
   compatibilityScore: number;
+  /** Profile completion % (how complete this candidate's profile is) */
+  profileCompletion: number;
 }
 
 /**
  * Convert CandidateProfile from database to Candidate interface
+ * Maps DB column names (drinking, profession, looking_for array) to Candidate format
  */
 export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
-  // Use first_name as primary, fallback to extracting from full_name/display_name
   const getFirstName = (name: string | null | undefined): string => {
     if (!name) return '';
     return name.split(' ')[0] || name;
   };
-  
-  const firstName = profile.first_name || 
-                    getFirstName(profile.full_name) || 
-                    getFirstName(profile.display_name) || 
-                    '';
-  const displayName = firstName || profile.display_name || profile.full_name || '';
-  
+  // DB schema: full_name (from auth), first_name (editable), display_name
+  const displayName = (profile as any).full_name || profile.first_name || (profile as any).display_name || profile.email?.split('@')[0] || 'Unknown';
+  const firstName = profile.first_name || getFirstName((profile as any).full_name) || getFirstName((profile as any).display_name) || displayName.split(' ')[0] || displayName;
+
+  // looking_for in DB can be string[] or string; looking_for_text is string
+  const lookingForRaw = (profile as any).looking_for;
+  const lookingFor = Array.isArray(lookingForRaw)
+    ? (lookingForRaw as string[]).join(', ')
+    : ((profile as any).looking_for_text || lookingForRaw || '');
+
+  // DB has drinking, profession (occupation may also exist)
+  const occupation = profile.occupation || (profile as any).profession || '';
+
   return {
     id: profile.id,
-    firstName: firstName,
-    displayName: displayName,
+    firstName,
+    displayName: displayName || 'Unknown',
     gender: (profile.gender as 'male' | 'female' | 'non-binary') || 'non-binary',
-    age: profile.age || 0,
+    age: profile.age ?? 0,
     city: profile.city || '',
     country: profile.country || '',
     nationality: profile.nationality || '',
     languages: profile.languages || [],
     photo: profile.photo_url || '',
     bio: profile.bio || '',
-    lookingFor: profile.looking_for || '',
+    lookingFor,
     vision: profile.vision || '',
     values: profile.values || [],
     parentingPhilosophy: profile.parenting_philosophy || '',
     involvement: profile.involvement || '',
     involvementFlexibility: profile.involvement_flexibility || '',
-    preferredMethod: 'open', // Deprecated - use conception_methods array instead (defaulting to 'open' for backward compatibility)
+    preferredMethod: 'open',
     openToRelocation: profile.open_to_relocation || false,
     relationshipStatus: profile.relationship_status || '',
     parentingStatus: profile.parenting_status || '',
-    occupation: profile.occupation || '',
+    occupation,
     education: profile.education || '',
     financialSituation: profile.financial_situation || '',
     lifestyleRhythm: profile.lifestyle_rhythm || '',
     familySupport: profile.family_support || '',
-    smoking: (profile.smoking as any) || 'never',
-    alcohol: (profile.alcohol as any) || 'never',
+    smoking: ((profile.smoking as string) || 'never') as any,
+    alcohol: (((profile as any).drinking ?? profile.alcohol ?? 'never') as string) as any,
     exercise: (profile.exercise as any) || 'rarely',
     diet: profile.diet || '',
     cannabis: profile.cannabis as any,
@@ -105,7 +114,8 @@ export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
     ethnicity: profile.ethnicity || undefined,
     starSign: profile.star_sign || undefined,
     pets: profile.pets || undefined,
-    compatibilityScore: 0, // Will be calculated dynamically by matching algorithm (not stored in DB)
+    compatibilityScore: 0,
+    profileCompletion: calculateProfileCompletion(profile as any),
   };
 }
 

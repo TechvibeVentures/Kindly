@@ -59,10 +59,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const { data: profiles = [], isLoading: candidatesLoading } = useCandidates();
   const { data: currentUserProfile } = useCurrentUserProfile();
-  const candidates = useMemo(
-    () => mapProfilesToCandidates(profiles, currentUserProfile),
-    [profiles, currentUserProfile]
-  );
+  const candidates = useMemo(() => {
+    const mapped = mapProfilesToCandidates(profiles, currentUserProfile);
+    const ownProfileId = currentUserProfile?.id;
+    if (!ownProfileId) return mapped;
+    return mapped.filter(c => c.id !== ownProfileId);
+  }, [profiles, currentUserProfile]);
 
   // Load app_mode and photo_url from profile so nav and header reflect current user
   useEffect(() => {

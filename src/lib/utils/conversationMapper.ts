@@ -29,14 +29,14 @@ export function mapDbConversationToFrontend(
   const seekerProfile = dbConv.user_profile;
   const candidateProfile = dbConv.candidate_profile;
 
-  const otherDisplayName = (otherProfile?.display_name || otherProfile?.full_name || 'Unknown') as string;
+  const otherDisplayName = (otherProfile?.full_name || otherProfile?.first_name || otherProfile?.display_name || 'Unknown') as string;
   const otherPhotoUrl = otherProfile?.photo_url ?? null;
   const otherProfileId = (otherProfile?.id ?? (isSeeker ? dbConv.candidate_id : dbConv.user_id)) as string;
 
   return {
     id: dbConv.id,
     candidateId: dbConv.candidate_id,
-    seekerName: (seekerProfile?.display_name || seekerProfile?.full_name || 'Unknown'),
+    seekerName: (seekerProfile?.full_name || seekerProfile?.first_name || seekerProfile?.display_name || 'Unknown'),
     otherDisplayName,
     otherPhotoUrl,
     otherProfileId,

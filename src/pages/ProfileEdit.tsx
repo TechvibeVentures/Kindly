@@ -352,7 +352,7 @@ export default function ProfileEdit() {
           phone: dbProfile.phone || '',
           verified: dbProfile.verified || false,
           memberSince: dbProfile.created_at ? new Date(dbProfile.created_at).getFullYear().toString() : '2024',
-          displayName: dbProfile.first_name || dbProfile.display_name || dbProfile.full_name || '',
+          displayName: dbProfile.full_name || dbProfile.first_name || dbProfile.display_name || '',
           gender: dbProfile.gender || 'woman',
           birthYear: dbProfile.birth_date ? new Date(dbProfile.birth_date).getFullYear() : 1990,
           city: dbProfile.city || '',

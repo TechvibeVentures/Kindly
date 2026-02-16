@@ -55,7 +55,7 @@ export function DesktopHeader() {
           {profile?.photo_url ? (
             <img
               src={profile.photo_url}
-              alt={profile?.display_name || "Profile"}
+              alt={profile?.full_name || profile?.first_name || profile?.display_name || "Profile"}
               className="w-9 h-9 rounded-full object-cover border-2 border-border hover:border-primary transition-colors"
             />
           ) : (
