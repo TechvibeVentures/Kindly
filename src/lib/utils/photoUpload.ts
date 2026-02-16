@@ -11,12 +11,12 @@ import { supabase } from '@/integrations/supabase/client';
  * @returns The public URL of the uploaded photo
  */
 export async function uploadPhoto(file: File, userId: string): Promise<string> {
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${userId}/${Date.now()}.${fileExt}`;
-  const filePath = `avatars/${fileName}`;
+  const fileExt = file.name.split('.').pop() || 'jpg';
+  // Path must be {userId}/{filename} - RLS checks (storage.foldername(name))[1] = auth.uid()
+  const filePath = `${userId}/${Date.now()}.${fileExt}`;
 
   // Upload file
-  const { error: uploadError, data } = await supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from('avatars')
     .upload(filePath, file, {
       cacheControl: '3600',
@@ -27,7 +27,7 @@ export async function uploadPhoto(file: File, userId: string): Promise<string> {
     throw new Error(`Failed to upload photo: ${uploadError.message}`);
   }
 
-  // Get public URL
+  // Get public URL (path is relative to bucket)
   const { data: { publicUrl } } = supabase.storage
     .from('avatars')
     .getPublicUrl(filePath);
