@@ -132,8 +132,9 @@ export default function CandidateDetail() {
     
     try {
       // Get or create conversation with this candidate
-      const conversation = await getOrCreateConversation.mutateAsync(candidateWithScore.id);
-      navigate(`/conversation/${conversation.id}`);
+      await getOrCreateConversation.mutateAsync(candidateWithScore.id);
+      // Redirect to conversations list where user can continue the chat
+      navigate('/conversations');
     } catch (error) {
       console.error('Error starting conversation:', error);
       // Fallback: navigate to conversations page
