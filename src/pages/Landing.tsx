@@ -33,6 +33,16 @@ export default function Landing() {
     }
   }, [navigate]);
 
+  // If user lands on / with email confirmation tokens in hash, send to /auth so session is set and they get redirected to onboarding
+  useEffect(() => {
+    if (window.location.pathname !== '/' || !window.location.hash) return;
+    const hash = window.location.hash.slice(1);
+    const hashParams = new URLSearchParams(hash);
+    if (hashParams.get('access_token') && (hashParams.get('type') === 'signup' || hashParams.get('type') === 'recovery')) {
+      window.location.replace(window.location.origin + '/auth' + window.location.hash);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
