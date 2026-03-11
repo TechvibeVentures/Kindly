@@ -21,6 +21,7 @@ import { ChildrenManager } from '@/components/ChildrenManager';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { calculateProfileCompletion } from '@/lib/utils/profileCompletion';
+import { uploadPhoto } from '@/lib/utils/photoUpload';
 import { useCurrentUserProfile, useUpdateProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
