@@ -59,8 +59,8 @@ export default function ConversationDetail() {
     return t[key] || topic.name;
   };
 
-  const coveredCount = conversation?.topics.filter(t => getTopicStatus(t) === 'covered').length || 0;
-  const totalTopics = conversation?.topics.length || 0;
+  const coveredByMeCount = conversation?.topics.filter(t => (userRole === 'seeker' ? t.seekerCovered : t.candidateCovered)).length ?? 0;
+  const totalTopics = conversation?.topics.length ?? 0;
 
   if (!conversation) {
     return (
@@ -105,7 +105,7 @@ export default function ConversationDetail() {
             onClick={() => setShowTopics(!showTopics)}
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            <span>{coveredCount}/{totalTopics} {t.topicsCovered}</span>
+            <span>{coveredByMeCount}/{totalTopics} {t.topicsCovered}</span>
             <ChevronDown className={`w-4 h-4 transition-transform ${showTopics ? 'rotate-180' : ''}`} />
           </button>
         </div>

@@ -56,8 +56,8 @@ export default function Conversations() {
 
   const selectedConv = conversations.find(c => c.id === selectedConversation);
 
-  const coveredCount = selectedConv?.topics.filter(t => getTopicStatus(t) === 'covered').length || 0;
-  const totalTopics = selectedConv?.topics.length || 0;
+  const coveredByMeCount = selectedConv?.topics.filter(t => (selectedConv?.isCurrentUserSeeker ? t.seekerCovered : t.candidateCovered)).length ?? 0;
+  const totalTopics = selectedConv?.topics.length ?? 0;
 
   const handleSend = async () => {
     if (!messageInput.trim() || !selectedConv || !selectedConversation) return;
@@ -131,7 +131,7 @@ export default function Conversations() {
             ) : (
               conversations.map((conversation) => {
                 const isSelected = conversation.id === selectedConversation;
-                const convCoveredCount = conversation.topics.filter(t => getTopicStatus(t) === 'covered').length;
+                const convCoveredCount = conversation.topics.filter(t => (conversation.isCurrentUserSeeker ? t.seekerCovered : t.candidateCovered)).length;
                 const photoUrl = conversation.otherPhotoUrl || getPlaceholderPhoto(conversation.otherProfileId);
                 const displayName = userRole === 'seeker' ? conversation.otherDisplayName : conversation.seekerName;
                 
@@ -195,7 +195,7 @@ export default function Conversations() {
                     onClick={() => setShowTopics(!showTopics)}
                     className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <span>{coveredCount}/{totalTopics} {t.topicsCovered}</span>
+                    <span>{coveredByMeCount}/{totalTopics} {t.topicsCovered}</span>
                     <ChevronDown className={`w-4 h-4 transition-transform ${showTopics ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
@@ -211,13 +211,13 @@ export default function Conversations() {
                     <div className="flex flex-wrap gap-2">
                       {selectedConv.topics.map((topic) => {
                         const status = getTopicStatus(topic);
-                        const isCoveredByMe = userRole === 'seeker' ? topic.seekerCovered : topic.candidateCovered;
+                        const isCoveredByMe = selectedConv.isCurrentUserSeeker ? topic.seekerCovered : topic.candidateCovered;
                         
                         return (
                           <button
                             key={topic.id}
                             onClick={() => {
-                              const isSeeker = userRole === 'seeker';
+                              const isSeeker = selectedConv.isCurrentUserSeeker ?? (userRole === 'seeker');
                               const currentCovered = isSeeker ? topic.seekerCovered : topic.candidateCovered;
                               updateTopicMutation.mutate({
                                 conversationId: selectedConv.id,
@@ -333,7 +333,7 @@ export default function Conversations() {
           </div>
         ) : (
           conversations.map((conversation, index) => {
-            const convCoveredCount = conversation.topics.filter(t => getTopicStatus(t) === 'covered').length;
+            const convCoveredCount = conversation.topics.filter(t => (conversation.isCurrentUserSeeker ? t.seekerCovered : t.candidateCovered)).length;
             const photoUrl = conversation.otherPhotoUrl || getPlaceholderPhoto(conversation.otherProfileId);
             const displayName = userRole === 'seeker' ? conversation.otherDisplayName : conversation.seekerName;
             

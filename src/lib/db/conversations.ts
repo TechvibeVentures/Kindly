@@ -1,6 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
+/** All conversation topic IDs – always show these in the UI; coverage comes from conversation_topic_coverages. */
+const CONVERSATION_TOPIC_IDS = ['parenting', 'conception', 'custody', 'living', 'legal', 'financial'] as const;
+
 export type Conversation = Tables<'conversations'> & {
   candidate_profile?: any;
   user_profile?: any;
@@ -58,10 +61,9 @@ export async function getUserConversations(): Promise<any[]> {
       const user_profile = profilesByUserId.get(conv.user_a_id) || null;
       const candidate_profile = profilesByUserId.get(conv.user_b_id) || null;
 
-      // Map coverages to topic rows: seeker=user_a, candidate=user_b
+      // Map coverages to topic rows: seeker=user_a, candidate=user_b (always show all topics; coverage from DB)
       const coverages = coveragesResult.data || [];
-      const topicIds = [...new Set(coverages.map((c: any) => c.topic_id))];
-      const topics = topicIds.map((topicId: string) => ({
+      const topics = CONVERSATION_TOPIC_IDS.map((topicId) => ({
         topic_id: topicId,
         seeker_covered: coverages.some((c: any) => c.topic_id === topicId && c.user_id === conv.user_a_id),
         candidate_covered: coverages.some((c: any) => c.topic_id === topicId && c.user_id === conv.user_b_id),
@@ -164,8 +166,7 @@ export async function getOrCreateConversation(candidateId: string): Promise<any>
   ]);
 
   const coverages = coveragesResult.data || [];
-  const topicIds = [...new Set(coverages.map((c: any) => c.topic_id))];
-  const topics = topicIds.map((topicId: string) => ({
+  const topics = CONVERSATION_TOPIC_IDS.map((topicId) => ({
     topic_id: topicId,
     seeker_covered: coverages.some((c: any) => c.topic_id === topicId && c.user_id === conversation.user_a_id),
     candidate_covered: coverages.some((c: any) => c.topic_id === topicId && c.user_id === conversation.user_b_id),
@@ -304,8 +305,7 @@ export async function getConversationTopics(conversationId: string): Promise<Con
     .eq('conversation_id', conversationId);
 
   const cov = coverages || [];
-  const topicIds = [...new Set(cov.map((c: any) => c.topic_id))];
-  const topics = topicIds.map((topicId: string) => ({
+  const topics = CONVERSATION_TOPIC_IDS.map((topicId) => ({
     topic_id: topicId,
     seeker_covered: cov.some((c: any) => c.topic_id === topicId && c.user_id === conversation.user_a_id),
     candidate_covered: cov.some((c: any) => c.topic_id === topicId && c.user_id === conversation.user_b_id),

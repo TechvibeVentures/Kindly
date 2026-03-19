@@ -40,6 +40,7 @@ export function mapDbConversationToFrontend(
     otherDisplayName,
     otherPhotoUrl,
     otherProfileId,
+    isCurrentUserSeeker: isSeeker,
     messages: messages.map(msg => ({
       id: msg.id,
       senderId: msg.sender_id === currentUserId ? 'seeker' : 'candidate',

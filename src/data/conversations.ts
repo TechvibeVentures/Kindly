@@ -27,6 +27,8 @@ export interface Conversation {
   otherPhotoUrl?: string | null;
   /** Profile ID of the other person (for nav to /candidate/:id) */
   otherProfileId?: string;
+  /** Whether the current user is user_a in this conversation (for topic coverage: seeker = user_a) */
+  isCurrentUserSeeker?: boolean;
 }
 
 export const topicsList = [
