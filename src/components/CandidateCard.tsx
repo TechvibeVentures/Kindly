@@ -1,6 +1,5 @@
 import type { Candidate } from '@/lib/utils/candidateMapper';
 import { ethnicityLabels, alcoholLabels, smokingLabels } from '@/lib/utils/candidateLabels';
-import { getPlaceholderPhoto } from '@/lib/placeholderPhoto';
 import { MapPin, Heart, Sparkles, Briefcase, Users, Wine, Cigarette, Globe, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '@/contexts/AppContext';
@@ -63,11 +62,17 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
         className="bg-card rounded-xl border border-border overflow-hidden cursor-pointer hover:shadow-lg hover:border-primary/30 transition-all group"
       >
         <div className="relative">
-          <img 
-            src={candidate.photo || getPlaceholderPhoto(candidate.id)} 
-            alt={candidate.displayName}
-            className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          {candidate.photo ? (
+            <img 
+              src={candidate.photo} 
+              alt={candidate.displayName}
+              className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full aspect-[4/3] bg-muted flex items-center justify-center">
+              <User className="w-16 h-16 text-muted-foreground" />
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent" />
           
           {/* Profile completion */}
@@ -178,11 +183,17 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
       className="kindly-card mb-4 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
     >
       <div className="relative">
-        <img 
-          src={candidate.photo || getPlaceholderPhoto(candidate.id)} 
-          alt={candidate.displayName}
-          className="w-full aspect-[4/3] object-cover"
-        />
+        {candidate.photo ? (
+          <img 
+            src={candidate.photo} 
+            alt={candidate.displayName}
+            className="w-full aspect-[4/3] object-cover"
+          />
+        ) : (
+          <div className="w-full aspect-[4/3] bg-muted flex items-center justify-center">
+            <User className="w-16 h-16 text-muted-foreground" />
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent" />
         
         <div className="absolute top-3 right-3">

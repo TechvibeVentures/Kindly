@@ -9,7 +9,6 @@ import { Topic } from '@/data/conversations';
 import { useConversations, useSendMessage, useUpdateTopicCoverage } from '@/hooks/useConversations';
 import { useCurrentUserProfile } from '@/hooks/useProfile';
 import { mapDbConversationToFrontend } from '@/lib/utils/conversationMapper';
-import { getPlaceholderPhoto } from '@/lib/placeholderPhoto';
 
 export default function Conversations() {
   const navigate = useNavigate();
@@ -132,7 +131,7 @@ export default function Conversations() {
               conversations.map((conversation) => {
                 const isSelected = conversation.id === selectedConversation;
                 const convCoveredCount = conversation.topics.filter(t => (conversation.isCurrentUserSeeker ? t.seekerCovered : t.candidateCovered)).length;
-                const photoUrl = conversation.otherPhotoUrl || getPlaceholderPhoto(conversation.otherProfileId);
+                const photoUrl = conversation.otherPhotoUrl ?? null;
                 const displayName = userRole === 'seeker' ? conversation.otherDisplayName : conversation.seekerName;
                 
                 return (
@@ -143,11 +142,13 @@ export default function Conversations() {
                       isSelected ? 'bg-primary/10' : 'hover:bg-secondary/50'
                     }`}
                   >
-                    <img 
-                      src={photoUrl} 
-                      alt={displayName || ''}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
+                    {photoUrl ? (
+                      <img src={photoUrl} alt={displayName || ''} className="w-12 h-12 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                        <MessageCircle className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                    )}
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -182,11 +183,17 @@ export default function Conversations() {
               <div className="border-b border-border">
                 <div className="p-4 flex items-center gap-4">
                   <button onClick={() => selectedConv.otherProfileId && navigate(`/candidate/${selectedConv.otherProfileId}`)}>
-                    <img 
-                      src={selectedConv.otherPhotoUrl || getPlaceholderPhoto(selectedConv.otherProfileId)} 
-                      alt={selectedConv.otherDisplayName || ''}
-                      className="w-10 h-10 rounded-full object-cover hover:ring-2 hover:ring-primary transition-all cursor-pointer"
-                    />
+                    {selectedConv.otherPhotoUrl ? (
+                      <img 
+                        src={selectedConv.otherPhotoUrl} 
+                        alt={selectedConv.otherDisplayName || ''}
+                        className="w-10 h-10 rounded-full object-cover hover:ring-2 hover:ring-primary transition-all cursor-pointer"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:ring-2 hover:ring-primary transition-all cursor-pointer">
+                        <MessageCircle className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                    )}
                   </button>
                   <div className="flex-1">
                     <h2 className="font-semibold">{userRole === 'seeker' ? selectedConv.otherDisplayName : selectedConv.seekerName}</h2>
@@ -334,7 +341,7 @@ export default function Conversations() {
         ) : (
           conversations.map((conversation, index) => {
             const convCoveredCount = conversation.topics.filter(t => (conversation.isCurrentUserSeeker ? t.seekerCovered : t.candidateCovered)).length;
-            const photoUrl = conversation.otherPhotoUrl || getPlaceholderPhoto(conversation.otherProfileId);
+            const photoUrl = conversation.otherPhotoUrl ?? null;
             const displayName = userRole === 'seeker' ? conversation.otherDisplayName : conversation.seekerName;
             
             return (
@@ -347,11 +354,13 @@ export default function Conversations() {
                 whileTap={{ scale: 0.98 }}
                 className="kindly-card w-full p-4 flex items-center gap-4 text-left"
               >
-                <img 
-                  src={photoUrl} 
-                  alt={displayName || ''}
-                  className="w-14 h-14 rounded-full object-cover"
-                />
+                {photoUrl ? (
+                  <img src={photoUrl} alt={displayName || ''} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                    <MessageCircle className="w-7 h-7 text-muted-foreground" />
+                  </div>
+                )}
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

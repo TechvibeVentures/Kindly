@@ -9,7 +9,6 @@ import { Topic } from '@/data/conversations';
 import { useConversation, useConversationMessages, useConversationTopics, useSendMessage, useUpdateTopicCoverage } from '@/hooks/useConversations';
 import { useCurrentUserProfile } from '@/hooks/useProfile';
 import { mapDbConversationToFrontend } from '@/lib/utils/conversationMapper';
-import { getPlaceholderPhoto } from '@/lib/placeholderPhoto';
 
 export default function ConversationDetail() {
   const { id } = useParams();
@@ -35,7 +34,7 @@ export default function ConversationDetail() {
     : null;
   
   const displayName = conversation ? (userRole === 'seeker' ? conversation.otherDisplayName : conversation.seekerName) : null;
-  const photoUrl = conversation?.otherPhotoUrl ?? (conversation?.otherProfileId ? getPlaceholderPhoto(conversation.otherProfileId) : null);
+  const photoUrl = conversation?.otherPhotoUrl ?? null;
 
   const handleSend = async () => {
     if (!messageInput.trim() || !conversation || !id) return;
