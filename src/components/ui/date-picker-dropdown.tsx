@@ -56,6 +56,7 @@ export function DatePickerDropdown({
   className,
   error,
 }: DatePickerDropdownProps) {
+  const hasValue = !!value;
   // Default to today - 40 years
   const defaultDate = React.useMemo(() => {
     const date = new Date();
@@ -181,7 +182,7 @@ export function DatePickerDropdown({
     <div className={cn("flex gap-2", className)}>
       {/* Day */}
       <Select
-        value={day}
+        value={hasValue ? day : ''}
         onValueChange={handleDayChange}
         disabled={disabled}
       >
@@ -204,7 +205,7 @@ export function DatePickerDropdown({
 
       {/* Month */}
       <Select
-        value={month}
+        value={hasValue ? month : ''}
         onValueChange={handleMonthChange}
         disabled={disabled}
       >
@@ -227,7 +228,7 @@ export function DatePickerDropdown({
 
       {/* Year */}
       <Select
-        value={year.toString()}
+        value={hasValue ? year.toString() : ''}
         onValueChange={(val) => handleYearChange(parseInt(val))}
         disabled={disabled}
       >
