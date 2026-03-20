@@ -27,6 +27,7 @@ export function CitySearchInput({ value, onChange, placeholder, onCancel }: City
   const [query, setQuery] = useState(value);
   const [results, setResults] = useState<CityResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(true);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const { t } = useLanguage();
 
@@ -66,31 +67,53 @@ export function CitySearchInput({ value, onChange, placeholder, onCancel }: City
 
   useEffect(() => { setResults(popularCities.map(c => ({ city: c.city, country: c.country, displayName: `${c.city}, ${c.country}` }))); }, []);
 
-  const handleSelect = (city: string, country: string) => { setQuery(city); onChange(city, country); };
+  const handleSelect = (city: string, country: string, displayName: string) => {
+    // Put the selected value into the input (so it doesn't look like a separate “field” below).
+    setQuery(displayName);
+    onChange(city, country);
+    // Close the dropdown once selected; typing again will re-open it.
+    setShowDropdown(false);
+  };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-secondary/30">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={placeholder || t.findYourCity} autoFocus className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-background border-none focus:outline-none text-sm" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setShowDropdown(true);
+            }}
+            placeholder={placeholder || t.findYourCity}
+            autoFocus
+            className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-background border-none focus:outline-none text-sm"
+          />
         </div>
         {onCancel && <button onClick={onCancel} className="text-foreground font-medium text-sm">{t.cancel}</button>}
       </div>
-      <div className="flex-1 overflow-y-auto">
-        {isLoading ? (
-          <div className="p-4 text-center text-muted-foreground">{t.searching}</div>
-        ) : results.length > 0 ? (
-          results.map((item, index) => (
-            <button key={`${item.city}-${item.country}-${index}`} onClick={() => handleSelect(item.city, item.country)} className="w-full flex items-center gap-3 px-4 py-4 hover:bg-secondary/50 active:bg-secondary transition-colors text-left border-b border-border/50">
-              <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <span className="text-foreground">{item.displayName}</span>
-            </button>
-          ))
-        ) : (
-          <div className="p-4 text-center text-muted-foreground">{t.noCitiesFound}</div>
-        )}
-      </div>
+      {showDropdown && (
+        <div className="overflow-y-auto max-h-56">
+          {isLoading ? (
+            <div className="p-4 text-center text-muted-foreground">{t.searching}</div>
+          ) : results.length > 0 ? (
+            results.map((item, index) => (
+              <button
+                key={`${item.city}-${item.country}-${index}`}
+                onClick={() => handleSelect(item.city, item.country, item.displayName)}
+                className="w-full flex items-center gap-3 px-4 py-4 hover:bg-secondary/50 active:bg-secondary transition-colors text-left border-b border-border/50"
+              >
+                <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                <span className="text-foreground">{item.displayName}</span>
+              </button>
+            ))
+          ) : (
+            <div className="p-4 text-center text-muted-foreground">{t.noCitiesFound}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
