@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { navigateToLandingTop } from '@/lib/landingNavigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,6 +64,7 @@ const lookingForOptionsMan = [
 
 export default function Onboarding() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [step, setStep] = useState(1);
   const [gender, setGender] = useState<'male' | 'female' | ''>('');
   const [birthDate, setBirthDate] = useState<string>('');
@@ -513,13 +515,20 @@ export default function Onboarding() {
           variant="ghost"
           size="sm"
           className="absolute left-4 top-1/2 -translate-y-1/2 gap-2 text-muted-foreground hover:text-foreground"
-          onClick={() => navigate('/')}
+          onClick={() => navigateToLandingTop(navigate, location)}
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="hidden sm:inline">Back to home</span>
           <span className="sm:hidden">Home</span>
         </Button>
-        <img src={kindlyLogo} alt="Kindly" className="h-8" />
+        <button
+          type="button"
+          onClick={() => navigateToLandingTop(navigate, location)}
+          className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Kindly home"
+        >
+          <img src={kindlyLogo} alt="Kindly" className="h-8" />
+        </button>
       </div>
 
       {/* Progress */}

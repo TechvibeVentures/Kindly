@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { navigateToLandingTop } from '@/lib/landingNavigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -80,6 +81,7 @@ interface InvitationRequest {
 
 export default function Admin() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -473,7 +475,14 @@ export default function Admin() {
             <Button variant="ghost" size="icon" onClick={() => navigate('/discover')}>
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <img src={kindlyLogo} alt="Kindly" className="h-8" />
+            <button
+              type="button"
+              onClick={() => navigateToLandingTop(navigate, location)}
+              className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="Kindly home"
+            >
+              <img src={kindlyLogo} alt="Kindly" className="h-8" />
+            </button>
             <span className="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
               Admin
             </span>

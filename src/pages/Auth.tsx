@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { navigateToLandingInviteRequest, navigateToLandingTop } from '@/lib/landingNavigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,7 +29,7 @@ type InviteRow = {
 
 export default function Auth() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const routerLocation = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const invitationCode = searchParams.get('invite');
   const signupIntent = searchParams.get('signup') === '1';
@@ -203,7 +204,7 @@ export default function Auth() {
   useEffect(() => {
     const hash = window.location.hash.slice(1);
     const hashParams = new URLSearchParams(hash);
-    const fromOtpExpired = (location.state as { otpExpired?: boolean })?.otpExpired;
+    const fromOtpExpired = (routerLocation.state as { otpExpired?: boolean })?.otpExpired;
     if (hashParams.get('error_code') === 'otp_expired' || fromOtpExpired) {
       toast({
         title: 'Link expired',
@@ -228,7 +229,7 @@ export default function Auth() {
         setIsLogin(true);
       }
     }
-  }, [invitationCode, searchParams, signupIntent, location.state, toast, validateInvitation]);
+  }, [invitationCode, searchParams, signupIntent, routerLocation.state, toast, validateInvitation]);
 
   const checkOnboardingAndRedirect = async (userId: string) => {
     try {
@@ -449,7 +450,7 @@ export default function Auth() {
   };
 
   const goToRequestInvitation = () => {
-    window.location.assign(`${window.location.origin}/#apply`);
+    navigateToLandingInviteRequest(navigate);
   };
 
   return (
@@ -458,7 +459,14 @@ export default function Auth() {
         <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
-        <img src={kindlyLogo} alt="Kindly" className="h-8" />
+        <button
+          type="button"
+          onClick={() => navigateToLandingTop(navigate, routerLocation)}
+          className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Kindly home"
+        >
+          <img src={kindlyLogo} alt="Kindly" className="h-8" />
+        </button>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-6">
@@ -509,7 +517,7 @@ export default function Auth() {
                     onClick={goToRequestInvitation}
                     className="w-full text-sm text-primary font-medium hover:underline"
                   >
-                    Request a private invitation
+                    Request an invitation code
                   </button>
                 </div>
               </>
@@ -619,7 +627,7 @@ export default function Auth() {
                         onClick={goToRequestInvitation}
                         className="text-sm text-muted-foreground hover:text-foreground block w-full"
                       >
-                        Request a private invitation
+                        Request an invitation code
                       </button>
                     </>
                   ) : (

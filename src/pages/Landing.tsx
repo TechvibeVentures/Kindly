@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import type { Translations } from '@/contexts/LanguageContext';
 import { Heart, Users, Shield, ArrowRight, MessageCircle, CheckCircle, Sparkles, Eye, Check, Lock, Globe, LogIn } from 'lucide-react';
 import kindlyLogo from '@/assets/kindly-logo.png';
 import { supabase } from '@/integrations/supabase/client';
+import { navigateToLandingTop } from '@/lib/landingNavigation';
 
 const BENEFIT_KEYS: (keyof Translations)[] = [
   'landingBenefit1',
@@ -35,6 +36,7 @@ const WHO_KEYS: (keyof Translations)[] = [
 
 export default function Landing() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,6 +46,16 @@ export default function Landing() {
 
   const benefits = useMemo(() => BENEFIT_KEYS.map((key) => t[key] as string), [t]);
   const whoItems = useMemo(() => WHO_KEYS.map((key) => t[key] as string), [t]);
+
+  // Deep-link to invitation request section (e.g. from Auth)
+  useEffect(() => {
+    if (location.pathname !== '/') return;
+    if (location.hash !== '#apply') return;
+    const timeoutId = window.setTimeout(() => {
+      document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    return () => window.clearTimeout(timeoutId);
+  }, [location.pathname, location.hash]);
 
   // When Supabase redirects here with expired confirmation link, send to Auth page
   useEffect(() => {
@@ -138,7 +150,14 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center min-w-0">
-            <img src={kindlyLogo} alt="Kindly" className="h-10 md:h-14 shrink-0" />
+            <button
+              type="button"
+              onClick={() => navigateToLandingTop(navigate, location)}
+              className="shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="Kindly home"
+            >
+              <img src={kindlyLogo} alt="Kindly" className="h-10 md:h-14" />
+            </button>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <Button
@@ -577,7 +596,14 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <img src={kindlyLogo} alt="Kindly" className="h-10" />
+              <button
+                type="button"
+                onClick={() => navigateToLandingTop(navigate, location)}
+                className="shrink-0 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Kindly home"
+              >
+                <img src={kindlyLogo} alt="Kindly" className="h-10" />
+              </button>
               <span className="text-muted-foreground">{t.landingFooterTagline}</span>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-6">

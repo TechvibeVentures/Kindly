@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { navigateToLandingTop } from '@/lib/landingNavigation';
 import { Bell, Globe, Check, User } from 'lucide-react';
 import kindlyLogo from '@/assets/kindly-logo.png';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,8 @@ import { useLanguage, languages } from '@/contexts/LanguageContext';
 import { useCurrentUserProfile } from '@/hooks/useProfile';
 
 export function DesktopHeader() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { language, setLanguage } = useLanguage();
   const currentLang = languages.find(l => l.code === language);
   const { data: profile } = useCurrentUserProfile();
@@ -20,9 +23,14 @@ export function DesktopHeader() {
     <header className="hidden md:flex sticky top-0 z-50 h-16 bg-background/95 backdrop-blur-sm border-b border-border px-6 items-center justify-between">
       {/* Left side - Logo */}
       <div className="flex items-center">
-        <NavLink to="/discover">
+        <button
+          type="button"
+          onClick={() => navigateToLandingTop(navigate, location)}
+          className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Kindly home"
+        >
           <img src={kindlyLogo} alt="Kindly" className="h-10" />
-        </NavLink>
+        </button>
       </div>
 
       {/* Right side actions */}
