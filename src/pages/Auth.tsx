@@ -127,7 +127,12 @@ export default function Auth() {
       setInvitation(data);
       setIsLogin(false);
       if (data.email) setEmail(data.email);
-      if (data.name) setFirstName(data.name);
+      // Campaign rows use `name` for an internal label (e.g. promo title), not the user's first name.
+      if (data.invitation_kind === 'individual' && data.name?.trim()) {
+        setFirstName(data.name.trim());
+      } else {
+        setFirstName('');
+      }
     } catch (err: unknown) {
       console.error('Invitation validation error:', err);
       toast({
@@ -546,6 +551,7 @@ export default function Auth() {
                         setInvitation(null);
                         setIsLogin(false);
                         setCodeInput('');
+                        setFirstName('');
                       }}
                     >
                       Use a different code
