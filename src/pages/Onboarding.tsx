@@ -9,11 +9,12 @@ import { DatePickerDropdown } from '@/components/ui/date-picker-dropdown';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { User, Camera, ArrowRight, ArrowLeft, CheckCircle, Briefcase, Globe, Users, Wine, Cigarette, Heart, Sparkles, Upload, MapPin } from 'lucide-react';
+import { User, Camera, ArrowRight, ArrowLeft, CheckCircle, Briefcase, Globe, Users, Wine, Cigarette, Heart, Upload } from 'lucide-react';
 import kindlyLogo from '@/assets/kindly-logo.png';
 import { allLanguages, ethnicityLabels } from '@/lib/utils/candidateLabels';
 import { uploadPhoto } from '@/lib/utils/photoUpload';
 import { CitySearchInput } from '@/components/CitySearchInput';
+import { LOOKING_FOR_OPTIONS } from '@/lib/lookingForOptions';
 
 const drinkingOptions = [
   { value: 'never', label: 'Never', description: 'I don\'t drink alcohol' },
@@ -48,18 +49,6 @@ const ethnicityOptions = [
 const genderOptions = [
   { value: 'male', label: 'Male' },
   { value: 'female', label: 'Female' },
-];
-
-const lookingForOptionsWoman = [
-  { value: 'classic-relationship', label: 'Classic relationship', description: 'Looking for a romantic partner' },
-  { value: 'joint-custody', label: 'Joint custody', description: 'Co-parenting with shared responsibilities' },
-  { value: 'sperm-donation', label: 'Sperm donation', description: 'Looking for a sperm donor' },
-];
-
-const lookingForOptionsMan = [
-  { value: 'classic-relationship', label: 'Classic relationship', description: 'Looking for a romantic partner' },
-  { value: 'joint-custody', label: 'Joint custody', description: 'Co-parenting with shared responsibilities' },
-  { value: 'sperm-donation', label: 'Sperm donation', description: 'Open to being a sperm donor' },
 ];
 
 export default function Onboarding() {
@@ -237,8 +226,8 @@ export default function Onboarding() {
       return;
     }
     
-    // Validate step 3
-    if (!validateStep(3)) {
+    // Re-validate step 2 (required fields including core values)
+    if (!validateStep(2)) {
       return;
     }
     
@@ -398,8 +387,11 @@ export default function Onboarding() {
   const steps = [
     { number: 1, title: 'Basic Info' },
     { number: 2, title: 'About You' },
-    { number: 3, title: 'Values & Custody' }
+    { number: 3, title: 'Photo' }
   ];
+
+  const wantsCoParenting =
+    lookingFor.includes('co-parenting') || lookingFor.includes('joint-custody');
 
   // Calculate age correctly (accounting for whether birthday has passed this year)
   const calculateAge = (birthDateString: string): number | null => {
@@ -438,14 +430,14 @@ export default function Onboarding() {
       if (!city.trim()) errors.push('Location');
     } else if (stepNumber === 2) {
       if (!bio.trim()) errors.push('Bio');
+      if (qualities.length !== 3) errors.push('Core Values (select exactly 3)');
       if (!profession.trim()) errors.push('Profession');
       if (languages.length === 0) errors.push('Languages');
       if (!ethnicity) errors.push('Ethnicity');
       if (!drinking) errors.push('Drinking');
       if (!smoking) errors.push('Smoking');
-    } else if (stepNumber === 3) {
-      if (qualities.length !== 3) errors.push('Core Values (select exactly 3)');
     }
+    // Step 3 is optional profile photo only — no required fields
     
     if (errors.length > 0) {
       setStepErrors({ ...stepErrors, [stepNumber]: errors });
@@ -484,8 +476,8 @@ export default function Onboarding() {
       const newQualities = qualities.filter(q => q !== quality);
       setQualities(newQualities);
       // Clear error when user selects exactly 3 values
-      if (stepErrors[3]?.includes('Core Values') && newQualities.length === 3) {
-        setStepErrors({ ...stepErrors, [3]: stepErrors[3]?.filter(e => e !== 'Core Values') || [] });
+      if (stepErrors[2]?.includes('Core Values') && newQualities.length === 3) {
+        setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => !e.includes('Core Values')) || [] });
       }
     } else {
       // Limit to exactly 3 values
@@ -500,8 +492,8 @@ export default function Onboarding() {
       const newQualities = [...qualities, quality];
       setQualities(newQualities);
       // Clear error when user selects exactly 3 values
-      if (stepErrors[3]?.includes('Core Values') && newQualities.length === 3) {
-        setStepErrors({ ...stepErrors, [3]: stepErrors[3]?.filter(e => e !== 'Core Values') || [] });
+      if (stepErrors[2]?.includes('Core Values') && newQualities.length === 3) {
+        setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => !e.includes('Core Values')) || [] });
       }
     }
   };
@@ -644,7 +636,7 @@ export default function Onboarding() {
                     What are you looking for? * (select all that apply)
                   </label>
                   <div className="space-y-2">
-                    {(gender === 'female' ? lookingForOptionsWoman : lookingForOptionsMan).map((option) => {
+                    {LOOKING_FOR_OPTIONS.map((option) => {
                       const isSelected = lookingFor.includes(option.value);
                       const hasError = stepErrors[1]?.includes('Looking For') && lookingFor.length === 0;
                       return (
@@ -687,6 +679,46 @@ export default function Onboarding() {
                         </button>
                       );
                     })}
+                  </div>
+                </div>
+              )}
+
+              {/* Custody / time with child — only relevant when co-parenting is a goal */}
+              {gender && wantsCoParenting && (
+                <div className="space-y-3 rounded-xl border border-border bg-card/50 p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/15">
+                      <Users className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0 space-y-1">
+                      <label className="text-sm font-medium text-foreground">
+                        Custody preference
+                      </label>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Roughly how much time you would want to care for the child yourself in a co-parenting setup.
+                        This helps others see if your expectations align (for example closer to equal shared care vs. a
+                        different split). You can always refine this later in your profile.
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground mb-2">
+                      Your share of care: {involvementPercent}%
+                    </p>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={involvementPercent}
+                      onChange={(e) => setInvolvementPercent(parseInt(e.target.value, 10))}
+                      className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                      <span>0%</span>
+                      <span>50%</span>
+                      <span>100%</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -738,7 +770,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 2: Photo Upload, Bio, Profession, Languages, Ethnicity, Drinking, Smoking */}
+          {/* Step 2: Bio, core values, profession, languages, lifestyle */}
           {step === 2 && (
             <div className="space-y-6">
               <div className="text-center">
@@ -751,42 +783,6 @@ export default function Onboarding() {
                 <p className="text-muted-foreground mb-6">
                   Share your background and lifestyle
                 </p>
-              </div>
-
-              {/* Photo Upload - Moved to top */}
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  Profile Photo (optional)
-                </label>
-                <div className="space-y-2">
-                  <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto overflow-hidden relative">
-                    {photoPreview ? (
-                      <img src={photoPreview} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      <Camera className="w-10 h-10 text-muted-foreground" />
-                    )}
-                  </div>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoSelect}
-                    className="hidden"
-                  />
-                  <Button
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full"
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    {photoFile ? 'Change Photo' : 'Upload Photo'}
-                  </Button>
-                  {photoFile && (
-                    <p className="text-sm text-muted-foreground text-center">
-                      {photoFile.name} ({(photoFile.size / 1024 / 1024).toFixed(2)} MB)
-                    </p>
-                  )}
-                </div>
               </div>
 
               {/* Bio */}
@@ -814,6 +810,77 @@ export default function Onboarding() {
                 <p className="text-sm text-muted-foreground mt-1">
                   {bio.length}/500 characters
                 </p>
+              </div>
+
+              {/* Core values */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Core values (select exactly 3) *
+                </label>
+                <div className="space-y-2">
+                  <div
+                    className={`flex flex-wrap gap-2 p-3 rounded-lg border bg-card min-h-[60px] ${
+                      stepErrors[2]?.some((e) => e.includes('Core Values')) ? '!border-destructive !border-2' : 'border-border'
+                    }`}
+                  >
+                    {qualities.length === 0 ? (
+                      <span className="text-muted-foreground/60 text-sm">Select values</span>
+                    ) : (
+                      qualities.map((quality) => (
+                        <span
+                          key={quality}
+                          className="px-3 py-1.5 rounded-full text-sm bg-primary text-primary-foreground flex items-center gap-2"
+                        >
+                          {quality}
+                          <button
+                            type="button"
+                            onClick={() => toggleQuality(quality)}
+                            className="hover:bg-primary-foreground/20 rounded-full p-0.5"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))
+                    )}
+                  </div>
+                  {showQualitiesSelector ? (
+                    <div ref={qualitiesSelectorRef} className="p-3 rounded-lg border border-border bg-card max-h-[200px] overflow-y-auto">
+                      <div className="grid grid-cols-2 gap-2">
+                        {qualitiesOptions.map((quality) => (
+                          <button
+                            key={quality}
+                            type="button"
+                            onClick={() => toggleQuality(quality)}
+                            className={`p-2 rounded-lg text-sm text-left transition-colors ${
+                              qualities.includes(quality)
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-secondary hover:bg-secondary/80'
+                            }`}
+                          >
+                            {quality}
+                          </button>
+                        ))}
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowQualitiesSelector(false)}
+                        className="w-full mt-3"
+                        size="sm"
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowQualitiesSelector(true)}
+                      className="w-full"
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      {qualities.length > 0 ? `Select values (${qualities.length}/3 selected)` : 'Select values'}
+                    </Button>
+                  )}
+                </div>
               </div>
 
               {/* Profession */}
@@ -1024,11 +1091,37 @@ export default function Onboarding() {
                 </Button>
                 <Button
                   onClick={() => handleStepContinue(3)}
-                  disabled={!bio.trim() || !profession.trim() || languages.length === 0 || !ethnicity || !drinking || !smoking}
+                  disabled={
+                    !bio.trim() ||
+                    qualities.length !== 3 ||
+                    !profession.trim() ||
+                    languages.length === 0 ||
+                    !ethnicity ||
+                    !drinking ||
+                    !smoking
+                  }
                   className="flex-1 h-12 bg-primary text-primary-foreground hover:bg-primary/90"
                   style={{
-                    opacity: (!bio.trim() || !profession.trim() || languages.length === 0 || !ethnicity || !drinking || !smoking) ? 0.5 : 1,
-                    cursor: (!bio.trim() || !profession.trim() || languages.length === 0 || !ethnicity || !drinking || !smoking) ? 'not-allowed' : 'pointer'
+                    opacity:
+                      !bio.trim() ||
+                      qualities.length !== 3 ||
+                      !profession.trim() ||
+                      languages.length === 0 ||
+                      !ethnicity ||
+                      !drinking ||
+                      !smoking
+                        ? 0.5
+                        : 1,
+                    cursor:
+                      !bio.trim() ||
+                      qualities.length !== 3 ||
+                      !profession.trim() ||
+                      languages.length === 0 ||
+                      !ethnicity ||
+                      !drinking ||
+                      !smoking
+                        ? 'not-allowed'
+                        : 'pointer'
                   }}
                 >
                   Continue
@@ -1038,106 +1131,54 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 3: Values & Custody */}
+          {/* Step 3: Optional profile photo */}
           {step === 3 && (
             <div className="space-y-6">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-6">
-                  <Heart className="w-8 h-8 text-primary" />
+                  <Camera className="w-8 h-8 text-primary" />
                 </div>
                 <h1 className="text-2xl font-bold text-foreground mb-2">
-                  Values & Custody
+                  Add a photo
                 </h1>
                 <p className="text-muted-foreground mb-6">
-                  What matters to you and your custody preference
+                  Optional — a clear face photo helps others recognize you. You can skip this and add one later in your
+                  profile.
                 </p>
               </div>
 
-              {/* Values */}
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Core Values (select exactly 3) *
+                  Profile photo (optional)
                 </label>
                 <div className="space-y-2">
-                  <div className={`flex flex-wrap gap-2 p-3 rounded-lg border bg-card min-h-[60px] ${
-                    stepErrors[3]?.includes('Core Values') ? '!border-destructive !border-2' : 'border-border'
-                  }`}>
-                    {qualities.length === 0 ? (
-                      <span className="text-muted-foreground/60 text-sm">Select values</span>
+                  <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mx-auto overflow-hidden relative">
+                    {photoPreview ? (
+                      <img src={photoPreview} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      qualities.map((quality) => (
-                        <span
-                          key={quality}
-                          className="px-3 py-1.5 rounded-full text-sm bg-primary text-primary-foreground flex items-center gap-2"
-                        >
-                          {quality}
-                          <button
-                            onClick={() => toggleQuality(quality)}
-                            className="hover:bg-primary-foreground/20 rounded-full p-0.5"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))
+                      <Camera className="w-10 h-10 text-muted-foreground" />
                     )}
                   </div>
-                  {showQualitiesSelector ? (
-                    <div ref={qualitiesSelectorRef} className="p-3 rounded-lg border border-border bg-card max-h-[200px] overflow-y-auto">
-                      <div className="grid grid-cols-2 gap-2">
-                        {qualitiesOptions.map((quality) => (
-                          <button
-                            key={quality}
-                            onClick={() => toggleQuality(quality)}
-                            className={`p-2 rounded-lg text-sm text-left transition-colors ${
-                              qualities.includes(quality)
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-secondary hover:bg-secondary/80'
-                            }`}
-                          >
-                            {quality}
-                          </button>
-                        ))}
-                      </div>
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowQualitiesSelector(false)}
-                        className="w-full mt-3"
-                        size="sm"
-                      >
-                        Done
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowQualitiesSelector(true)}
-                      className="w-full"
-                    >
-                      <Heart className="w-4 h-4 mr-2" />
-                      {qualities.length > 0 ? `Select values (${qualities.length}/3 selected)` : 'Select values'}
-                    </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    {photoFile ? 'Change photo' : 'Upload photo'}
+                  </Button>
+                  {photoFile && (
+                    <p className="text-sm text-muted-foreground text-center">
+                      {photoFile.name} ({(photoFile.size / 1024 / 1024).toFixed(2)} MB)
+                    </p>
                   )}
-                </div>
-              </div>
-
-              {/* Custody */}
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  Custody Preference: {involvementPercent}%
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  value={involvementPercent}
-                  onChange={(e) => setInvolvementPercent(parseInt(e.target.value))}
-                  className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>0%</span>
-                  <span>50%</span>
-                  <span>100%</span>
                 </div>
               </div>
 
@@ -1151,14 +1192,14 @@ export default function Onboarding() {
                 </Button>
                 <Button
                   onClick={handleComplete}
-                  disabled={isLoading || isUploadingPhoto || qualities.length !== 3}
+                  disabled={isLoading || isUploadingPhoto}
                   className="flex-1 h-12 bg-primary text-primary-foreground hover:bg-primary/90"
                   style={{
-                    opacity: (isLoading || isUploadingPhoto || qualities.length !== 3) ? 0.5 : 1,
-                    cursor: (isLoading || isUploadingPhoto || qualities.length !== 3) ? 'not-allowed' : 'pointer'
+                    opacity: isLoading || isUploadingPhoto ? 0.5 : 1,
+                    cursor: isLoading || isUploadingPhoto ? 'not-allowed' : 'pointer'
                   }}
                 >
-                  {isLoading || isUploadingPhoto ? (isUploadingPhoto ? 'Uploading...' : 'Saving...') : 'Complete Setup'}
+                  {isLoading || isUploadingPhoto ? (isUploadingPhoto ? 'Uploading...' : 'Saving...') : 'Complete setup'}
                   {!isLoading && !isUploadingPhoto && <CheckCircle className="w-5 h-5 ml-2" />}
                 </Button>
               </div>

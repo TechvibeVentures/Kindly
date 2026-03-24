@@ -16,6 +16,7 @@ import { ProfileEditSheet } from '@/components/ProfileEditSheet';
 import { CitySearchInput } from '@/components/CitySearchInput';
 import { allLanguages } from '@/lib/utils/candidateLabels';
 import { supabase } from '@/integrations/supabase/client';
+import { LOOKING_FOR_OPTIONS } from '@/lib/lookingForOptions';
 
 const sexualityOptions = [
   { value: 'heterosexual', label: 'Straight' },
@@ -72,12 +73,6 @@ const relationshipStatusOptions = [
   { value: 'divorced', label: 'Divorced' },
   { value: 'widowed', label: 'Widowed' },
   { value: 'separated', label: 'Separated' },
-];
-
-const lookingForOptions = [
-  { value: 'classic-relationship', label: 'Classic relationship', description: 'Looking for a romantic partner' },
-  { value: 'joint-custody', label: 'Joint custody', description: 'Co-parenting with shared responsibilities' },
-  { value: 'sperm-donation', label: 'Sperm donation', description: 'Open to being a sperm donor' },
 ];
 
 interface Section {
@@ -873,7 +868,7 @@ export default function ProfileCompletionWizard() {
                       <span className="text-muted-foreground/60 text-sm">{t.selectOptions}</span>
                     ) : (
                       lookingFor.map((value) => {
-                        const option = lookingForOptions.find(opt => opt.value === value);
+                        const option = LOOKING_FOR_OPTIONS.find(opt => opt.value === value);
                         return (
                           <span
                             key={value}
@@ -894,7 +889,7 @@ export default function ProfileCompletionWizard() {
                   {showLookingForSelector ? (
                     <div ref={lookingForSelectorRef} className="p-3 rounded-lg border border-border bg-card max-h-[200px] overflow-y-auto">
                       <div className="space-y-2">
-                        {lookingForOptions.map((option) => (
+                        {LOOKING_FOR_OPTIONS.map((option) => (
                           <button
                             key={option.value}
                             onClick={() => toggleLookingFor(option.value)}

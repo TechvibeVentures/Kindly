@@ -4,6 +4,7 @@ import type { Topic } from '@/data/conversations';
 import { useAuth } from '@/hooks/useAuth';
 import { useCandidates } from '@/hooks/useCandidates';
 import { mapProfilesToCandidates } from '@/lib/utils/candidateMapper';
+import { normalizeLookingForValue } from '@/lib/lookingForOptions';
 import { useCurrentUserProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -117,8 +118,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
       (candidate.ethnicity && filters.ethnicity.includes(candidate.ethnicity));
     const languageMatch = !filters.languages?.length || 
       (candidate.languages?.length ? filters.languages.some(l => candidate.languages.includes(l)) : true);
-    const lookingForMatch = !filters.lookingFor?.length || 
-      (candidate.lookingFor && filters.lookingFor.some(term => candidate.lookingFor.toLowerCase().includes(term.toLowerCase())));
+    const lookingForMatch = !filters.lookingFor?.length || (() => {
+      if (candidate.lookingForTags?.length) {
+        const tags = new Set(candidate.lookingForTags.map(normalizeLookingForValue));
+        return filters.lookingFor!.some((f) => tags.has(normalizeLookingForValue(f)));
+      }
+      return (
+        candidate.lookingFor &&
+        filters.lookingFor!.some((term) =>
+          candidate.lookingFor.toLowerCase().includes(term.toLowerCase())
+        )
+      );
+    })();
     const involvementPercent = candidate.involvement?.includes('50/50') ? 50 :
       candidate.involvement?.includes('60/40') ? 60 :
       candidate.involvement?.includes('40/60') ? 40 : 50;

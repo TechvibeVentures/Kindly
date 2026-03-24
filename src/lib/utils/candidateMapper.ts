@@ -4,6 +4,7 @@
  */
 
 import type { CandidateProfile } from '@/lib/db/candidates';
+import { formatLookingForDisplay, normalizeLookingForValue } from '@/lib/lookingForOptions';
 import { calculateCompatibility } from './matchAlgorithm';
 import { calculateProfileCompletion } from './profileCompletion';
 
@@ -20,6 +21,8 @@ export interface Candidate {
   photo: string;
   bio: string;
   lookingFor: string;
+  /** Normalized `looking_for` slugs for filtering (includes legacy keys mapped to current values). */
+  lookingForTags?: string[];
   vision: string;
   values: string[];
   parentingPhilosophy: string;
@@ -67,9 +70,15 @@ export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
 
   // looking_for in DB can be string[] or string; looking_for_text is string
   const lookingForRaw = (profile as any).looking_for;
-  const lookingFor = Array.isArray(lookingForRaw)
-    ? (lookingForRaw as string[]).join(', ')
-    : ((profile as any).looking_for_text || lookingForRaw || '');
+  let lookingFor = '';
+  let lookingForTags: string[] | undefined;
+  if (Array.isArray(lookingForRaw) && lookingForRaw.length > 0) {
+    const arr = lookingForRaw as string[];
+    lookingFor = formatLookingForDisplay(arr);
+    lookingForTags = arr.map(normalizeLookingForValue);
+  } else {
+    lookingFor = ((profile as any).looking_for_text || lookingForRaw || '') as string;
+  }
 
   // DB has drinking, profession (occupation may also exist)
   const occupation = profile.occupation || (profile as any).profession || '';
@@ -105,6 +114,7 @@ export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
     photo: profile.photo_url || '',
     bio: profile.bio || '',
     lookingFor,
+    lookingForTags,
     vision: profile.vision || '',
     values,
     parentingPhilosophy: profile.parenting_philosophy || '',

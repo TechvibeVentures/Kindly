@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { ProfileEditSheet } from '@/components/ProfileEditSheet';
 import { ProfileOptionList } from '@/components/ProfileOptionList';
 import { CitySearchInput } from '@/components/CitySearchInput';
+import { lookingForFilterOptions } from '@/lib/lookingForOptions';
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -26,11 +27,7 @@ const ethnicityOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-const lookingForOptions = [
-  { value: 'classic-relationship', label: 'Classic relationship' },
-  { value: 'joint-custody', label: 'Joint custody' },
-  { value: 'sperm-donation', label: 'Sperm donation' },
-];
+const lookingForOptions = lookingForFilterOptions();
 
 const defaultFiltersState = {
   ageRange: [25, 50] as [number, number],
