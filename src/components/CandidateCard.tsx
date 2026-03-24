@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -75,12 +76,25 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent" />
           
-          {/* Profile completion */}
-          <div className="absolute top-2 right-2">
-            <div className="flex items-center gap-1 bg-background/90 backdrop-blur-sm rounded-full px-2 py-1">
-              <Sparkles className="w-3 h-3 text-primary" />
-              <span className="text-xs font-semibold">{candidate.profileCompletion}%</span>
-            </div>
+          {/* Compatibility match (weighted score vs your profile) */}
+          <div className="absolute top-2 right-2 z-10">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1 bg-background/90 backdrop-blur-sm rounded-full px-2 py-1 cursor-help border border-transparent hover:border-border text-left"
+                >
+                  <Sparkles className="w-3 h-3 text-primary shrink-0" />
+                  <span className="text-xs font-semibold">
+                    {candidate.compatibilityScore}% {t.match}
+                  </span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[min(320px,85vw)] text-xs leading-relaxed z-[60]">
+                {t.matchScoreHowCalculated}
+              </TooltipContent>
+            </Tooltip>
           </div>
 
           {/* Name overlay */}
@@ -196,11 +210,24 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent" />
         
-        <div className="absolute top-3 right-3">
-          <div className="flex items-center gap-1.5 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1.5">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-foreground">{candidate.profileCompletion}%</span>
-          </div>
+        <div className="absolute top-3 right-3 z-10">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1.5 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1.5 cursor-help border border-transparent hover:border-border text-left"
+              >
+                <Sparkles className="w-4 h-4 text-primary shrink-0" />
+                <span className="text-sm font-semibold text-foreground">
+                  {candidate.compatibilityScore}% {t.match}
+                </span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="max-w-[min(320px,85vw)] text-xs leading-relaxed z-[60]">
+              {t.matchScoreHowCalculated}
+            </TooltipContent>
+          </Tooltip>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 text-background">

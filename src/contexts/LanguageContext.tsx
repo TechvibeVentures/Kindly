@@ -277,6 +277,8 @@ export type Translations = {
     goBack: string;
     backToDiscover: string;
     match: string;
+    /** Discover / cards: hover help for compatibility % */
+    matchScoreHowCalculated: string;
     message: string;
     aboutMe: string;
     about: string;
@@ -768,6 +770,8 @@ const translations: Record<Language, Translations> = {
     goBack: 'Go Back',
     backToDiscover: 'Back to Discover',
     match: 'match',
+    matchScoreHowCalculated:
+      'We blend your profile with theirs using a weighted score: core values (25%), parenting philosophy (20%), custody preferences (20%), lifestyle such as drinking and smoking (10%), shared languages (10%), and what each of you is looking for (10%). Interests, causes, location, and age add a small amount. Empty or missing fields count lower, so fuller profiles usually produce a more meaningful score.',
     message: 'Message',
     aboutMe: 'About Me',
     about: 'About',
@@ -1264,6 +1268,8 @@ const translations: Record<Language, Translations> = {
     goBack: 'Zurück',
     backToDiscover: 'Zurück zur Entdecken-Seite',
     match: 'Match',
+    matchScoreHowCalculated:
+      'Wir kombinieren eure Profile gewichtet: Kernwerte (25 %), Erziehungsphilosophie (20 %), Betreuungswünsche (20 %), Lebensstil z. B. Alkohol und Rauchen (10 %), gemeinsame Sprachen (10 %) und was ihr jeweils sucht (10 %). Interessen, Anliegen, Ort und Alter zählen weniger. Fehlende Angaben senken den Wert – vollständigere Profile liefern aussagekräftigere Scores.',
     message: 'Nachricht',
     aboutMe: 'Über mich',
     about: 'Über',
@@ -1760,6 +1766,8 @@ const translations: Record<Language, Translations> = {
     goBack: 'Retour',
     backToDiscover: 'Retour à Découvrir',
     match: 'correspondance',
+    matchScoreHowCalculated:
+      'Nous combinons vos profils avec des pondérations : valeurs (25 %), philosophie parentale (20 %), préférences de garde (20 %), mode de vie (alcool, tabac, etc.) (10 %), langues communes (10 %) et ce que chacun recherche (10 %). Centres d’intérêt, causes, lieu et âge comptent peu. Les champs vides réduisent le score ; des profils complets donnent un résultat plus fiable.',
     message: 'Message',
     aboutMe: 'À propos de moi',
     about: 'À propos',
@@ -2256,6 +2264,8 @@ const translations: Record<Language, Translations> = {
     goBack: 'Volver',
     backToDiscover: 'Volver a Descubrir',
     match: 'coincidencia',
+    matchScoreHowCalculated:
+      'Combinamos ambos perfiles con pesos: valores (25 %), filosofía de crianza (20 %), preferencias de custodia (20 %), estilo de vida como alcohol y tabaco (10 %), idiomas compartidos (10 %) y lo que cada uno busca (10 %). Intereses, causas, ubicación y edad pesan poco. Los datos faltantes bajan la puntuación; perfiles más completos dan un resultado más fiable.',
     message: 'Mensaje',
     aboutMe: 'Sobre mí',
     about: 'Sobre',
@@ -2752,6 +2762,8 @@ const translations: Record<Language, Translations> = {
     goBack: 'Torna indietro',
     backToDiscover: 'Torna a Scopri',
     match: 'corrispondenza',
+    matchScoreHowCalculated:
+      'Uniamo i vostri profili con pesi: valori (25 %), filosofia genitoriale (20 %), preferenze sulla custodia (20 %), stile di vita come alcol e fumo (10 %), lingue in comune (10 %) e cosa cercate ciascuno (10 %). Interessi, cause, luogo ed età contano poco. Campi vuoti abbassano il punteggio; profili più completi danno un risultato più significativo.',
     message: 'Messaggio',
     aboutMe: 'Su di me',
     about: 'Informazioni',
