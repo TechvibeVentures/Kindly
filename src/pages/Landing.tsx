@@ -211,7 +211,7 @@ export default function Landing() {
                 {t.landingHeroSubtitle}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
                 <Button 
                   size="lg" 
                   className="kindly-button-primary text-lg px-8"
@@ -224,11 +224,20 @@ export default function Landing() {
                   size="lg" 
                   variant="outline" 
                   className="text-lg px-8"
-                  onClick={() => scrollToSection('why')}
+                  onClick={() => navigate('/auth?signup=1')}
                 >
-                  {t.landingCtaWhy}
+                  {t.landingCtaSignupWithInvite}
                 </Button>
               </div>
+              <p className="mt-4 text-center lg:text-left">
+                <button
+                  type="button"
+                  onClick={() => scrollToSection('why')}
+                  className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4"
+                >
+                  {t.landingCtaWhy}
+                </button>
+              </p>
             </motion.div>
 
             {/* App Preview */}

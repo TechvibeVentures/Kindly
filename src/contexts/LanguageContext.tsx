@@ -443,6 +443,7 @@ export type Translations = {
     landingHeroLine3: string;
     landingHeroSubtitle: string;
     landingCtaInvite: string;
+    landingCtaSignupWithInvite: string;
     landingCtaWhy: string;
     landingMiniValues: string;
     landingMiniMatch: string;
@@ -934,7 +935,8 @@ const translations: Record<Language, Translations> = {
     landingHeroSubtitle:
       'A private, guided path for those who want to explore parenthood intentionally — beyond the limits of romantic timing.',
     landingCtaInvite: 'Request Private Invitation',
-    landingCtaWhy: 'Why This Exists',
+    landingCtaSignupWithInvite: 'Sign up with invitation',
+    landingCtaWhy: 'Why this exists',
     landingMiniValues: 'Values',
     landingMiniMatch: 'Match',
     landingPreviewApp: 'Preview App',
@@ -1429,6 +1431,7 @@ const translations: Record<Language, Translations> = {
     landingHeroSubtitle:
       'Ein privater, begleiteter Weg für alle, die Elternschaft bewusst angehen möchten — jenseits romantischer Zeitvorgaben.',
     landingCtaInvite: 'Private Einladung anfragen',
+    landingCtaSignupWithInvite: 'Mit Einladung registrieren',
     landingCtaWhy: 'Warum es uns gibt',
     landingMiniValues: 'Werte',
     landingMiniMatch: 'Match',
@@ -1924,6 +1927,7 @@ const translations: Record<Language, Translations> = {
     landingHeroSubtitle:
       'Un parcours privé et guidé pour explorer la parentalité avec intention — au-delà des contraintes du couple romantique.',
     landingCtaInvite: 'Demander une invitation privée',
+    landingCtaSignupWithInvite: "S'inscrire avec une invitation",
     landingCtaWhy: 'Pourquoi Kindly existe',
     landingMiniValues: 'Valeurs',
     landingMiniMatch: 'Match',
@@ -2419,6 +2423,7 @@ const translations: Record<Language, Translations> = {
     landingHeroSubtitle:
       'Un camino privado y guiado para explorar la paternidad con intención, más allá del calendario romántico.',
     landingCtaInvite: 'Solicitar invitación privada',
+    landingCtaSignupWithInvite: 'Registrarse con invitación',
     landingCtaWhy: 'Por qué existe esto',
     landingMiniValues: 'Valores',
     landingMiniMatch: 'Match',
@@ -2914,6 +2919,7 @@ const translations: Record<Language, Translations> = {
     landingHeroSubtitle:
       'Un percorso privato e guidato per esplorare la genitorialità con intenzione — oltre i limiti del tempo romantico.',
     landingCtaInvite: 'Richiedi invito privato',
+    landingCtaSignupWithInvite: 'Registrati con invito',
     landingCtaWhy: 'Perché esiste',
     landingMiniValues: 'Valori',
     landingMiniMatch: 'Match',
