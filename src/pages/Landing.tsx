@@ -131,26 +131,19 @@ export default function Landing() {
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <img src={kindlyLogo} alt="Kindly" className="h-10 md:h-14" />
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <img src={kindlyLogo} alt="Kindly" className="h-10 md:h-14 shrink-0" />
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/auth')}
-              className="gap-2"
-            >
-              <LogIn className="w-4 h-4" />
-              Sign in
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="hidden md:inline-flex"
+              className="shrink-0"
               onClick={() => scrollToSection('features')}
             >
-              Learn More
+              Read more
             </Button>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2">
@@ -171,6 +164,15 @@ export default function Landing() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/auth')}
+              className="gap-2"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign in
+            </Button>
           </div>
         </div>
       </nav>

@@ -1,0 +1,14 @@
+---
+description: After substantive code changes, commit, push to GitHub, and deploy Vercel Preview for testing.
+alwaysApply: true
+---
+
+# Deploy workflow after changes
+
+When you finish meaningful edits (features, fixes, copy, or config that should be tested on the web):
+
+1. **Commit** on the current branch with a clear, conventional message (what changed and why in one line; optional body for context).
+2. **Push** to `origin` on the same branch (`git push -u origin <branch>` if the branch has no upstream yet).
+3. **Deploy Preview** with Vercel so the user can test: from the repo root run `npx vercel deploy` (preview). If the project is not linked locally, use `npx vercel link` once or rely on Git integration after push if Preview deploys from GitHub.
+
+Do not skip push when the user expects a remote URL. If `vercel deploy` fails (auth, not linked), say what succeeded (commit/push) and what failed with the exact error.

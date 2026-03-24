@@ -8,7 +8,7 @@ import { DatePickerDropdown } from '@/components/ui/date-picker-dropdown';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { User, Camera, ArrowRight, CheckCircle, Briefcase, Globe, Users, Wine, Cigarette, Heart, Sparkles, Upload, MapPin } from 'lucide-react';
+import { User, Camera, ArrowRight, ArrowLeft, CheckCircle, Briefcase, Globe, Users, Wine, Cigarette, Heart, Sparkles, Upload, MapPin } from 'lucide-react';
 import kindlyLogo from '@/assets/kindly-logo.png';
 import { allLanguages, ethnicityLabels } from '@/lib/utils/candidateLabels';
 import { uploadPhoto } from '@/lib/utils/photoUpload';
@@ -507,7 +507,18 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="p-6 flex items-center justify-center border-b border-border">
+      <div className="relative p-6 flex items-center justify-center border-b border-border">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="absolute left-4 top-1/2 -translate-y-1/2 gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => navigate('/')}
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span className="hidden sm:inline">Back to home</span>
+          <span className="sm:hidden">Home</span>
+        </Button>
         <img src={kindlyLogo} alt="Kindly" className="h-8" />
       </div>
 
