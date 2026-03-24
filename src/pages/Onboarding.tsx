@@ -110,7 +110,7 @@ export default function Onboarding() {
           }
           
           if (data?.onboarding_completed) {
-            navigate('/profile');
+            navigate('/discover');
             return;
           }
           
@@ -372,7 +372,7 @@ export default function Onboarding() {
       
       // Navigate after ensuring profile is available
       setTimeout(() => {
-        navigate('/profile');
+        navigate('/discover');
       }, 500);
     } catch (error: any) {
       console.error('Error completing onboarding:', error);
