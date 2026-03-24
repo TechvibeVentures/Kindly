@@ -1,15 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
-import { X, RotateCcw, MapPin, Globe, ChevronRight, Heart, MessageCircle, User } from 'lucide-react';
+import { X, RotateCcw, MapPin, Globe, ChevronRight, Heart, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { allLanguages, involvementOptions } from '@/lib/utils/candidateLabels';
+import { allLanguages } from '@/lib/utils/candidateLabels';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { ProfileEditSheet } from '@/components/ProfileEditSheet';
 import { ProfileOptionList } from '@/components/ProfileOptionList';
 import { CitySearchInput } from '@/components/CitySearchInput';
 import { lookingForFilterOptions } from '@/lib/lookingForOptions';
+import { cn } from '@/lib/utils';
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -41,7 +42,7 @@ const defaultFiltersState = {
   custodyRange: [0, 100] as [number, number]
 };
 
-type EditField = 'ethnicity' | 'languages' | 'lookingFor' | 'gender' | 'location' | null;
+type EditField = 'ethnicity' | 'languages' | 'lookingFor' | 'location' | null;
 
 export function FilterModal({ isOpen, onClose }: FilterModalProps) {
   const { filters, setFilters } = useApp();
@@ -115,14 +116,6 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
     return `${localFilters.lookingFor.length} selected`;
   };
 
-  const getGenderDisplay = () => {
-    if (!localFilters.gender?.length) return '';
-    if (localFilters.gender.length === 1) {
-      return genderFilterOptions.find((o) => o.value === localFilters.gender[0])?.label || '';
-    }
-    return `${localFilters.gender.length} selected`;
-  };
-
   const getCustodyDisplay = () => {
     const min = localFilters.custodyRange?.[0] ?? 0;
     const max = localFilters.custodyRange?.[1] ?? 100;
@@ -191,6 +184,43 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
               </div>
 
               <div className="overflow-y-auto max-h-[60vh] px-4 py-4 space-y-6">
+                {/* Gender — top, inline tags */}
+                <div>
+                  <p className="font-medium mb-1">{t.gender}</p>
+                  <p className="text-xs text-muted-foreground mb-3 leading-snug">
+                    {t.filterGenderSelectHint}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {genderFilterOptions.map((opt) => {
+                      const selected = localFilters.gender?.includes(opt.value) ?? false;
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() =>
+                            setLocalFilters((prev) => {
+                              const g = prev.gender || [];
+                              const has = g.includes(opt.value);
+                              return {
+                                ...prev,
+                                gender: has ? g.filter((x) => x !== opt.value) : [...g, opt.value],
+                              };
+                            })
+                          }
+                          className={cn(
+                            'px-4 py-2.5 rounded-full text-sm font-medium border-2 transition-colors',
+                            selected
+                              ? 'border-primary bg-primary/10 text-foreground'
+                              : 'border-border bg-card text-muted-foreground hover:border-primary/40'
+                          )}
+                        >
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Age Range */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
@@ -270,12 +300,6 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
                       label="Ethnicity" 
                       value={getEthnicityDisplay()} 
                       onClick={() => setEditField('ethnicity')} 
-                    />
-                    <FilterRow
-                      icon={User}
-                      label={t.gender}
-                      value={getGenderDisplay()}
-                      onClick={() => setEditField('gender')}
                     />
                     <FilterRow 
                       icon={MessageCircle}
@@ -380,27 +404,6 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
             ...prev,
             ethnicity: Array.isArray(selected) ? selected : [selected]
           }))}
-          multiple
-          showSaveButton
-          onSave={() => setEditField(null)}
-        />
-      </ProfileEditSheet>
-
-      <ProfileEditSheet
-        open={editField === 'gender'}
-        onOpenChange={(open) => !open && setEditField(null)}
-        title={t.gender}
-        subtitle={t.filterGenderSelectHint}
-      >
-        <ProfileOptionList
-          options={genderFilterOptions}
-          value={localFilters.gender || []}
-          onChange={(selected) =>
-            setLocalFilters((prev) => ({
-              ...prev,
-              gender: Array.isArray(selected) ? selected : [selected],
-            }))
-          }
           multiple
           showSaveButton
           onSave={() => setEditField(null)}
