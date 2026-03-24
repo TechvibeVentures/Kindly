@@ -10,7 +10,7 @@ export const languages: { code: Language; label: string; nativeLabel: string }[]
   { code: 'it', label: 'Italian', nativeLabel: 'Italiano' },
 ];
 
-type Translations = {
+export type Translations = {
   // Navigation
   discover: string;
   resources: string;
@@ -433,6 +433,70 @@ type Translations = {
     readingSection2Content: string;
     readingSection3Title: string;
     readingSection3Content: string;
+
+    // Landing page
+    landingReadMore: string;
+    landingSignIn: string;
+    landingEarlyAccessBadge: string;
+    landingHeroLine1: string;
+    landingHeroFounding: string;
+    landingHeroLine3: string;
+    landingHeroSubtitle: string;
+    landingCtaInvite: string;
+    landingCtaWhy: string;
+    landingMiniValues: string;
+    landingMiniMatch: string;
+    landingPreviewApp: string;
+    landingMatchPercentLabel: string;
+    landingValuesAligned: string;
+    landingNewMatch: string;
+    landingStartConversation: string;
+    landingWhyTitle: string;
+    landingWhyP1: string;
+    landingWhyHighlight: string;
+    landingPillarNotDating: string;
+    landingPillarNotDonation: string;
+    landingPillarIntentional: string;
+    landingFeaturesTitle: string;
+    landingFeaturesSubtitle: string;
+    landingBenefit1: string;
+    landingBenefit2: string;
+    landingBenefit3: string;
+    landingBenefit4: string;
+    landingBenefit5: string;
+    landingBenefit6: string;
+    landingWhoTitle: string;
+    landingWhoIntro: string;
+    landingWho1: string;
+    landingWho2: string;
+    landingWho3: string;
+    landingWho4: string;
+    landingWho5: string;
+    landingCommitmentTitle: string;
+    landingCommitmentZero: string;
+    landingCommitmentBody: string;
+    landingFormTitle: string;
+    landingFormSubtitle: string;
+    landingPlaceholderName: string;
+    landingPlaceholderEmail: string;
+    landingSubmitting: string;
+    landingFormSubmit: string;
+    landingPrivacyNote: string;
+    landingAlreadyAccount: string;
+    landingRequestReceivedTitle: string;
+    landingRequestReceivedBody: string;
+    landingFooterTagline: string;
+    landingFooterPreview: string;
+    landingFooterPrivacy: string;
+    landingFooterTerms: string;
+    landingFooterContact: string;
+    landingCopyright: string;
+    landingToastFillFields: string;
+    landingToastRequestReceived: string;
+    landingToastRequestReceivedDesc: string;
+    landingToastError: string;
+    landingToastServiceUnavailable: string;
+    landingToastTryLater: string;
 };
 
 const translations: Record<Language, Translations> = {
@@ -859,6 +923,76 @@ const translations: Record<Language, Translations> = {
     readingSection2Content: 'Age-appropriate books to help children understand their family structure: "Two Homes" by Claire Masurel, "Mom\'s House, Dad\'s House for Kids" by Isolina Ricci, and "Standing on My Own Two Feet" by Tamara Schmitz.',
     readingSection3Title: 'Legal & Financial Resources',
     readingSection3Content: '"The Complete Guide to Custody Agreements" - Understanding your legal options. "Money and Family" by Liz Frazier - Financial planning for modern families.',
+
+    // Landing page
+    landingReadMore: 'Read more',
+    landingSignIn: 'Sign in',
+    landingEarlyAccessBadge: 'Early Access Open',
+    landingHeroLine1: 'Become a',
+    landingHeroFounding: 'Founding',
+    landingHeroLine3: 'Co-Parent Candidate',
+    landingHeroSubtitle:
+      'A private, guided path for those who want to explore parenthood intentionally — beyond the limits of romantic timing.',
+    landingCtaInvite: 'Request Private Invitation',
+    landingCtaWhy: 'Why This Exists',
+    landingMiniValues: 'Values',
+    landingMiniMatch: 'Match',
+    landingPreviewApp: 'Preview App',
+    landingMatchPercentLabel: '92% Match',
+    landingValuesAligned: 'Values aligned',
+    landingNewMatch: 'New Match!',
+    landingStartConversation: 'Start conversation',
+    landingWhyTitle: 'Why This Exists',
+    landingWhyP1:
+      "Many people feel deeply ready for parenthood, yet life circumstances — career, timing, relationships — don't align.",
+    landingWhyHighlight: 'Kindly creates a structured, safe alternative.',
+    landingPillarNotDating: 'Not a dating app',
+    landingPillarNotDonation: 'Not anonymous donation',
+    landingPillarIntentional: 'Intentional parenthood',
+    landingFeaturesTitle: 'What Founding Candidates Receive',
+    landingFeaturesSubtitle: 'Exclusive benefits for our first 200 members',
+    landingBenefit1: 'Private early access',
+    landingBenefit2: 'Handcrafted profile review',
+    landingBenefit3: 'Direct guidance from founders',
+    landingBenefit4: 'Priority matching when the community grows',
+    landingBenefit5: 'Invitation to small-group conversations',
+    landingBenefit6: 'A Founding Candidate badge on your profile',
+    landingWhoTitle: 'Who This Is For',
+    landingWhoIntro: 'People who:',
+    landingWho1: 'are 30–50 years old',
+    landingWho2: 'feel emotionally ready for parenthood',
+    landingWho3: 'want to design a stable, intentional parenting partnership',
+    landingWho4: 'prefer safety, clarity, and structure over dating uncertainty',
+    landingWho5: 'are open to building family across borders',
+    landingCommitmentTitle: 'Your Commitment',
+    landingCommitmentZero: 'Zero obligations.',
+    landingCommitmentBody:
+      'Just a conversation about what parenthood means to you and how a co-parenting partnership could look.',
+    landingFormTitle: 'Request Private Invitation',
+    landingFormSubtitle:
+      'Join the first 200 Founding Co-Parent Candidates and help shape the future of intentional family building.',
+    landingPlaceholderName: 'Your name',
+    landingPlaceholderEmail: 'Your email',
+    landingSubmitting: 'Submitting...',
+    landingFormSubmit: 'Request Private Invitation',
+    landingPrivacyNote: 'Your information is kept private and never shared.',
+    landingAlreadyAccount: 'Already have an account?',
+    landingRequestReceivedTitle: 'Request Received',
+    landingRequestReceivedBody:
+      "Thank you for your interest in becoming a Founding Co-Parent Candidate. We'll review your application and reach out soon with next steps.",
+    landingFooterTagline: 'Building families with intention',
+    landingFooterPreview: 'Preview App',
+    landingFooterPrivacy: 'Privacy',
+    landingFooterTerms: 'Terms',
+    landingFooterContact: 'Contact',
+    landingCopyright: '© 2025 Kindly. All rights reserved.',
+    landingToastFillFields: 'Please fill in all fields',
+    landingToastRequestReceived: 'Request received!',
+    landingToastRequestReceivedDesc: "We'll review your application and reach out soon.",
+    landingToastError: 'Something went wrong',
+    landingToastServiceUnavailable:
+      'Service temporarily unavailable. Please try again later or contact support.',
+    landingToastTryLater: 'Please try again later.',
   },
   de: {
     // Navigation
@@ -1284,6 +1418,76 @@ const translations: Record<Language, Translations> = {
     readingSection2Content: 'Altersgerechte Bücher, um Kindern ihre Familienstruktur zu erklären: „Zwei Zuhause" von Claire Masurel, „Mamas Haus, Papas Haus für Kinder" von Isolina Ricci und „Auf meinen eigenen zwei Füßen stehen" von Tamara Schmitz.',
     readingSection3Title: 'Rechtliche & finanzielle Ressourcen',
     readingSection3Content: '„Der vollständige Leitfaden zu Sorgerechtsvereinbarungen" - Verstehen Sie Ihre rechtlichen Optionen. „Geld und Familie" von Liz Frazier - Finanzplanung für moderne Familien.',
+
+    // Landing page
+    landingReadMore: 'Mehr lesen',
+    landingSignIn: 'Anmelden',
+    landingEarlyAccessBadge: 'Frühzugang offen',
+    landingHeroLine1: 'Werden Sie',
+    landingHeroFounding: 'Gründungs-',
+    landingHeroLine3: 'Co-Parent-Kandidat/in',
+    landingHeroSubtitle:
+      'Ein privater, begleiteter Weg für alle, die Elternschaft bewusst angehen möchten — jenseits romantischer Zeitvorgaben.',
+    landingCtaInvite: 'Private Einladung anfragen',
+    landingCtaWhy: 'Warum es uns gibt',
+    landingMiniValues: 'Werte',
+    landingMiniMatch: 'Match',
+    landingPreviewApp: 'App ansehen',
+    landingMatchPercentLabel: '92 % Match',
+    landingValuesAligned: 'Werte passen',
+    landingNewMatch: 'Neues Match!',
+    landingStartConversation: 'Gespräch starten',
+    landingWhyTitle: 'Warum es uns gibt',
+    landingWhyP1:
+      'Viele fühlen sich bereit für Elternschaft, doch Beruf, Timing oder Beziehungen passen nicht zusammen.',
+    landingWhyHighlight: 'Kindly bietet eine strukturierte, sichere Alternative.',
+    landingPillarNotDating: 'Keine Dating-App',
+    landingPillarNotDonation: 'Keine anonyme Spende',
+    landingPillarIntentional: 'Bewusste Elternschaft',
+    landingFeaturesTitle: 'Was Gründungskandidat:innen erhalten',
+    landingFeaturesSubtitle: 'Exklusive Vorteile für unsere ersten 200 Mitglieder',
+    landingBenefit1: 'Privater Frühzugang',
+    landingBenefit2: 'Persönliche Profilprüfung',
+    landingBenefit3: 'Direkte Begleitung durch die Gründer:innen',
+    landingBenefit4: 'Priorität beim Matching mit wachsender Community',
+    landingBenefit5: 'Einladung zu Kleingruppen-Gesprächen',
+    landingBenefit6: 'Ein Gründungskandidaten-Badge auf Ihrem Profil',
+    landingWhoTitle: 'Für wen das ist',
+    landingWhoIntro: 'Menschen, die:',
+    landingWho1: '30–50 Jahre alt sind',
+    landingWho2: 'sich emotional auf Elternschaft einlassen können',
+    landingWho3: 'eine stabile, bewusste Elternpartnerschaft gestalten wollen',
+    landingWho4: 'Sicherheit, Klarheit und Struktur Dating-Unsicherheit vorziehen',
+    landingWho5: 'offen sind, Familie über Grenzen hinweg aufzubauen',
+    landingCommitmentTitle: 'Ihr Engagement',
+    landingCommitmentZero: 'Keine Verpflichtungen.',
+    landingCommitmentBody:
+      'Nur ein Gespräch darüber, was Elternschaft für Sie bedeutet und wie eine Co-Parenting-Partnerschaft aussehen könnte.',
+    landingFormTitle: 'Private Einladung anfragen',
+    landingFormSubtitle:
+      'Werden Sie einer der ersten 200 Gründungs-Co-Parent-Kandidat:innen und gestalten Sie mit, wie bewusste Familien entstehen.',
+    landingPlaceholderName: 'Ihr Name',
+    landingPlaceholderEmail: 'Ihre E-Mail',
+    landingSubmitting: 'Wird gesendet...',
+    landingFormSubmit: 'Private Einladung anfragen',
+    landingPrivacyNote: 'Ihre Angaben bleiben vertraulich und werden nicht weitergegeben.',
+    landingAlreadyAccount: 'Sie haben bereits ein Konto?',
+    landingRequestReceivedTitle: 'Anfrage eingegangen',
+    landingRequestReceivedBody:
+      'Vielen Dank für Ihr Interesse. Wir prüfen Ihre Anfrage und melden uns bald mit den nächsten Schritten.',
+    landingFooterTagline: 'Familien mit Absicht gestalten',
+    landingFooterPreview: 'App ansehen',
+    landingFooterPrivacy: 'Datenschutz',
+    landingFooterTerms: 'AGB',
+    landingFooterContact: 'Kontakt',
+    landingCopyright: '© 2025 Kindly. Alle Rechte vorbehalten.',
+    landingToastFillFields: 'Bitte alle Felder ausfüllen',
+    landingToastRequestReceived: 'Anfrage eingegangen!',
+    landingToastRequestReceivedDesc: 'Wir prüfen Ihre Bewerbung und melden uns bald.',
+    landingToastError: 'Etwas ist schiefgelaufen',
+    landingToastServiceUnavailable:
+      'Dienst vorübergehend nicht verfügbar. Bitte später erneut versuchen oder den Support kontaktieren.',
+    landingToastTryLater: 'Bitte versuchen Sie es später erneut.',
   },
   fr: {
     // Navigation
@@ -1709,6 +1913,76 @@ const translations: Record<Language, Translations> = {
     readingSection2Content: 'Livres adaptés à l\'âge pour aider les enfants à comprendre leur structure familiale : « Deux maisons » de Claire Masurel, « La maison de maman, la maison de papa pour les enfants » d\'Isolina Ricci et « Debout sur mes deux pieds » de Tamara Schmitz.',
     readingSection3Title: 'Ressources juridiques et financières',
     readingSection3Content: '« Le guide complet des accords de garde » - Comprendre vos options légales. « Argent et famille » de Liz Frazier - Planification financière pour les familles modernes.',
+
+    // Landing page
+    landingReadMore: 'En savoir plus',
+    landingSignIn: 'Connexion',
+    landingEarlyAccessBadge: 'Accès anticipé ouvert',
+    landingHeroLine1: 'Devenez un',
+    landingHeroFounding: 'candidat fondateur',
+    landingHeroLine3: 'à la coparentalité',
+    landingHeroSubtitle:
+      'Un parcours privé et guidé pour explorer la parentalité avec intention — au-delà des contraintes du couple romantique.',
+    landingCtaInvite: 'Demander une invitation privée',
+    landingCtaWhy: 'Pourquoi Kindly existe',
+    landingMiniValues: 'Valeurs',
+    landingMiniMatch: 'Match',
+    landingPreviewApp: 'Aperçu de l’app',
+    landingMatchPercentLabel: '92 % de match',
+    landingValuesAligned: 'Valeurs alignées',
+    landingNewMatch: 'Nouveau match !',
+    landingStartConversation: 'Démarrer la conversation',
+    landingWhyTitle: 'Pourquoi Kindly existe',
+    landingWhyP1:
+      'Beaucoup se sentent prêts pour la parentalité, mais carrière, timing ou relations ne s’alignent pas.',
+    landingWhyHighlight: 'Kindly propose une alternative structurée et sûre.',
+    landingPillarNotDating: 'Pas une appli de rencontres',
+    landingPillarNotDonation: 'Pas un don anonyme',
+    landingPillarIntentional: 'Parentalité intentionnelle',
+    landingFeaturesTitle: 'Ce que reçoivent les candidats fondateurs',
+    landingFeaturesSubtitle: 'Avantages exclusifs pour nos 200 premiers membres',
+    landingBenefit1: 'Accès anticipé privé',
+    landingBenefit2: 'Relecture de profil personnalisée',
+    landingBenefit3: 'Accompagnement direct par les fondateurs',
+    landingBenefit4: 'Priorité au matching quand la communauté grandit',
+    landingBenefit5: 'Invitation à des conversations de petit groupe',
+    landingBenefit6: 'Un badge « candidat fondateur » sur votre profil',
+    landingWhoTitle: 'À qui s’adresse Kindly',
+    landingWhoIntro: 'Aux personnes qui :',
+    landingWho1: 'ont entre 30 et 50 ans',
+    landingWho2: 'se sentent prêtes émotionnellement pour la parentalité',
+    landingWho3: 'veulent construire un partenariat parental stable et intentionnel',
+    landingWho4: 'privilégient sécurité, clarté et structure au hasard des rencontres',
+    landingWho5: 'sont ouvertes à fonder une famille au-delà des frontières',
+    landingCommitmentTitle: 'Votre engagement',
+    landingCommitmentZero: 'Aucune obligation.',
+    landingCommitmentBody:
+      'Juste une conversation sur ce que vous attendez de la parentalité et de la coparentalité.',
+    landingFormTitle: 'Demander une invitation privée',
+    landingFormSubtitle:
+      'Rejoignez les 200 premiers candidats fondateurs et façonnez l’avenir de la parentalité intentionnelle.',
+    landingPlaceholderName: 'Votre nom',
+    landingPlaceholderEmail: 'Votre e-mail',
+    landingSubmitting: 'Envoi en cours...',
+    landingFormSubmit: 'Demander une invitation privée',
+    landingPrivacyNote: 'Vos informations restent confidentielles et ne sont jamais partagées.',
+    landingAlreadyAccount: 'Vous avez déjà un compte ?',
+    landingRequestReceivedTitle: 'Demande reçue',
+    landingRequestReceivedBody:
+      'Merci pour votre intérêt. Nous examinerons votre demande et vous recontacterons bientôt.',
+    landingFooterTagline: 'Des familles construites avec intention',
+    landingFooterPreview: 'Aperçu de l’app',
+    landingFooterPrivacy: 'Confidentialité',
+    landingFooterTerms: 'Conditions',
+    landingFooterContact: 'Contact',
+    landingCopyright: '© 2025 Kindly. Tous droits réservés.',
+    landingToastFillFields: 'Veuillez remplir tous les champs',
+    landingToastRequestReceived: 'Demande reçue !',
+    landingToastRequestReceivedDesc: 'Nous examinerons votre demande et vous recontacterons bientôt.',
+    landingToastError: 'Une erreur s’est produite',
+    landingToastServiceUnavailable:
+      'Service temporairement indisponible. Réessayez plus tard ou contactez le support.',
+    landingToastTryLater: 'Veuillez réessayer plus tard.',
   },
   es: {
     // Navigation
@@ -2134,6 +2408,76 @@ const translations: Record<Language, Translations> = {
     readingSection2Content: 'Libros apropiados para la edad para ayudar a los niños a entender su estructura familiar: "Dos Hogares" de Claire Masurel, "La Casa de Mamá, La Casa de Papá para Niños" de Isolina Ricci y "De Pie Sobre Mis Propios Dos Pies" de Tamara Schmitz.',
     readingSection3Title: 'Recursos Legales y Financieros',
     readingSection3Content: '"La Guía Completa de Acuerdos de Custodia" - Entendiendo sus opciones legales. "Dinero y Familia" de Liz Frazier - Planificación financiera para familias modernas.',
+
+    // Landing page
+    landingReadMore: 'Leer más',
+    landingSignIn: 'Iniciar sesión',
+    landingEarlyAccessBadge: 'Acceso anticipado abierto',
+    landingHeroLine1: 'Conviértete en',
+    landingHeroFounding: 'candidato/a fundador/a',
+    landingHeroLine3: 'de coparentalidad',
+    landingHeroSubtitle:
+      'Un camino privado y guiado para explorar la paternidad con intención, más allá del calendario romántico.',
+    landingCtaInvite: 'Solicitar invitación privada',
+    landingCtaWhy: 'Por qué existe esto',
+    landingMiniValues: 'Valores',
+    landingMiniMatch: 'Match',
+    landingPreviewApp: 'Vista previa de la app',
+    landingMatchPercentLabel: '92 % de match',
+    landingValuesAligned: 'Valores alineados',
+    landingNewMatch: '¡Nuevo match!',
+    landingStartConversation: 'Iniciar conversación',
+    landingWhyTitle: 'Por qué existe esto',
+    landingWhyP1:
+      'Muchas personas se sienten listas para la paternidad, pero carrera, tiempo o relaciones no encajan.',
+    landingWhyHighlight: 'Kindly ofrece una alternativa estructurada y segura.',
+    landingPillarNotDating: 'No es una app de citas',
+    landingPillarNotDonation: 'No es donación anónima',
+    landingPillarIntentional: 'Paternidad intencional',
+    landingFeaturesTitle: 'Qué reciben los candidatos fundadores',
+    landingFeaturesSubtitle: 'Beneficios exclusivos para nuestros primeros 200 miembros',
+    landingBenefit1: 'Acceso anticipado privado',
+    landingBenefit2: 'Revisión artesanal del perfil',
+    landingBenefit3: 'Acompañamiento directo de los fundadores',
+    landingBenefit4: 'Prioridad en el matching al crecer la comunidad',
+    landingBenefit5: 'Invitación a conversaciones en grupo pequeño',
+    landingBenefit6: 'Un distintivo de candidato fundador en tu perfil',
+    landingWhoTitle: 'Para quién es',
+    landingWhoIntro: 'Personas que:',
+    landingWho1: 'tienen entre 30 y 50 años',
+    landingWho2: 'se sienten emocionalmente listas para la paternidad',
+    landingWho3: 'quieren diseñar una coparentalidad estable e intencional',
+    landingWho4: 'prefieren seguridad, claridad y estructura a la incertidumbre de las citas',
+    landingWho5: 'están abiertas a formar familia más allá de límites',
+    landingCommitmentTitle: 'Tu compromiso',
+    landingCommitmentZero: 'Cero obligaciones.',
+    landingCommitmentBody:
+      'Solo una conversación sobre lo que significa la paternidad para ti y cómo podría ser la coparentalidad.',
+    landingFormTitle: 'Solicitar invitación privada',
+    landingFormSubtitle:
+      'Únete a los primeros 200 candidatos fundadores y ayuda a dar forma al futuro de familia intencional.',
+    landingPlaceholderName: 'Tu nombre',
+    landingPlaceholderEmail: 'Tu correo',
+    landingSubmitting: 'Enviando...',
+    landingFormSubmit: 'Solicitar invitación privada',
+    landingPrivacyNote: 'Tu información es privada y nunca se comparte.',
+    landingAlreadyAccount: '¿Ya tienes cuenta?',
+    landingRequestReceivedTitle: 'Solicitud recibida',
+    landingRequestReceivedBody:
+      'Gracias por tu interés. Revisaremos tu solicitud y te contactaremos pronto con los siguientes pasos.',
+    landingFooterTagline: 'Familias con intención',
+    landingFooterPreview: 'Vista previa de la app',
+    landingFooterPrivacy: 'Privacidad',
+    landingFooterTerms: 'Términos',
+    landingFooterContact: 'Contacto',
+    landingCopyright: '© 2025 Kindly. Todos los derechos reservados.',
+    landingToastFillFields: 'Completa todos los campos',
+    landingToastRequestReceived: '¡Solicitud recibida!',
+    landingToastRequestReceivedDesc: 'Revisaremos tu solicitud y te contactaremos pronto.',
+    landingToastError: 'Algo salió mal',
+    landingToastServiceUnavailable:
+      'Servicio no disponible temporalmente. Inténtalo más tarde o contacta soporte.',
+    landingToastTryLater: 'Inténtalo de nuevo más tarde.',
   },
   it: {
     // Navigation
@@ -2559,6 +2903,76 @@ const translations: Record<Language, Translations> = {
     readingSection2Content: 'Libri adatti all\'età per aiutare i bambini a capire la loro struttura familiare: "Due Case" di Claire Masurel, "La Casa di Mamma, La Casa di Papà per Bambini" di Isolina Ricci e "In Piedi Sui Miei Due Piedi" di Tamara Schmitz.',
     readingSection3Title: 'Risorse Legali e Finanziarie',
     readingSection3Content: '"La Guida Completa agli Accordi di Custodia" - Capire le vostre opzioni legali. "Soldi e Famiglia" di Liz Frazier - Pianificazione finanziaria per le famiglie moderne.',
+
+    // Landing page
+    landingReadMore: 'Per saperne di più',
+    landingSignIn: 'Accedi',
+    landingEarlyAccessBadge: 'Accesso anticipato aperto',
+    landingHeroLine1: 'Diventa un',
+    landingHeroFounding: 'candidato fondatore',
+    landingHeroLine3: 'di co-genitorialità',
+    landingHeroSubtitle:
+      'Un percorso privato e guidato per esplorare la genitorialità con intenzione — oltre i limiti del tempo romantico.',
+    landingCtaInvite: 'Richiedi invito privato',
+    landingCtaWhy: 'Perché esiste',
+    landingMiniValues: 'Valori',
+    landingMiniMatch: 'Match',
+    landingPreviewApp: 'Anteprima app',
+    landingMatchPercentLabel: '92% Match',
+    landingValuesAligned: 'Valori allineati',
+    landingNewMatch: 'Nuovo match!',
+    landingStartConversation: 'Inizia la conversazione',
+    landingWhyTitle: 'Perché esiste',
+    landingWhyP1:
+      'Molte persone si sentono pronte per la genitorialità, ma carriera, tempi e relazioni non coincidono.',
+    landingWhyHighlight: 'Kindly offre un’alternativa strutturata e sicura.',
+    landingPillarNotDating: 'Non un’app di incontri',
+    landingPillarNotDonation: 'Non una donazione anonima',
+    landingPillarIntentional: 'Genitorialità intenzionale',
+    landingFeaturesTitle: 'Cosa ricevono i candidati fondatori',
+    landingFeaturesSubtitle: 'Vantaggi esclusivi per i primi 200 membri',
+    landingBenefit1: 'Accesso anticipato privato',
+    landingBenefit2: 'Revisione profilo curata',
+    landingBenefit3: 'Guida diretta dai fondatori',
+    landingBenefit4: 'Priorità nel matching con la crescita della community',
+    landingBenefit5: 'Invito a conversazioni di piccolo gruppo',
+    landingBenefit6: 'Un badge candidato fondatore sul profilo',
+    landingWhoTitle: 'Per chi è',
+    landingWhoIntro: 'Persone che:',
+    landingWho1: 'hanno tra 30 e 50 anni',
+    landingWho2: 'si sentono pronte emotivamente per la genitorialità',
+    landingWho3: 'vogliono costruire una partnership genitoriale stabile e intenzionale',
+    landingWho4: 'preferiscono sicurezza, chiarezza e struttura all’incertezza degli appuntamenti',
+    landingWho5: 'sono aperte a creare famiglia oltre i confini',
+    landingCommitmentTitle: 'Il tuo impegno',
+    landingCommitmentZero: 'Zero obblighi.',
+    landingCommitmentBody:
+      'Solo una conversazione su cosa significa per te la genitorialità e come potrebbe essere una partnership di co-genitorialità.',
+    landingFormTitle: 'Richiedi invito privato',
+    landingFormSubtitle:
+      'Unisciti ai primi 200 candidati fondatori e contribuisci a plasmare il futuro delle famiglie intenzionali.',
+    landingPlaceholderName: 'Il tuo nome',
+    landingPlaceholderEmail: 'La tua email',
+    landingSubmitting: 'Invio in corso...',
+    landingFormSubmit: 'Richiedi invito privato',
+    landingPrivacyNote: 'Le tue informazioni restano private e non vengono condivise.',
+    landingAlreadyAccount: 'Hai già un account?',
+    landingRequestReceivedTitle: 'Richiesta ricevuta',
+    landingRequestReceivedBody:
+      'Grazie per il tuo interesse. Esamineremo la tua richiesta e ti contatteremo presto con i prossimi passi.',
+    landingFooterTagline: 'Famiglie con intenzione',
+    landingFooterPreview: 'Anteprima app',
+    landingFooterPrivacy: 'Privacy',
+    landingFooterTerms: 'Termini',
+    landingFooterContact: 'Contatti',
+    landingCopyright: '© 2025 Kindly. Tutti i diritti riservati.',
+    landingToastFillFields: 'Compila tutti i campi',
+    landingToastRequestReceived: 'Richiesta ricevuta!',
+    landingToastRequestReceivedDesc: 'Esamineremo la tua richiesta e ti contatteremo presto.',
+    landingToastError: 'Qualcosa è andato storto',
+    landingToastServiceUnavailable:
+      'Servizio temporaneamente non disponibile. Riprova più tardi o contatta supporto.',
+    landingToastTryLater: 'Riprova più tardi.',
   },
 };
 
