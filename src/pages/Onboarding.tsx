@@ -15,6 +15,7 @@ import { allLanguages, ethnicityLabels } from '@/lib/utils/candidateLabels';
 import { uploadPhoto } from '@/lib/utils/photoUpload';
 import { CitySearchInput } from '@/components/CitySearchInput';
 import { LOOKING_FOR_OPTIONS } from '@/lib/lookingForOptions';
+import { cn } from '@/lib/utils';
 
 const drinkingOptions = [
   { value: 'never', label: 'Never', description: 'I don\'t drink alcohol' },
@@ -226,8 +227,9 @@ export default function Onboarding() {
       return;
     }
     
-    // Re-validate step 2 (required fields including core values)
+    // Re-validate step 2 so missing fields show errors (user may be on step 3)
     if (!validateStep(2)) {
+      setStep(2);
       return;
     }
     
@@ -426,7 +428,7 @@ export default function Onboarding() {
     if (stepNumber === 1) {
       if (!birthDate) errors.push('Birthdate');
       if (!gender) errors.push('Gender');
-      if (lookingFor.length === 0) errors.push('Looking For');
+      if (gender && lookingFor.length === 0) errors.push('Looking For');
       if (!city.trim()) errors.push('Location');
     } else if (stepNumber === 2) {
       if (!bio.trim()) errors.push('Bio');
@@ -631,7 +633,12 @@ export default function Onboarding() {
 
               {/* Looking For - Only show if gender is selected */}
               {gender && (
-                <div>
+                <div
+                  className={cn(
+                    'rounded-xl p-1 -m-1',
+                    stepErrors[1]?.includes('Looking For') && lookingFor.length === 0 && 'ring-2 ring-destructive'
+                  )}
+                >
                   <label className="text-sm font-medium text-foreground mb-2 block">
                     What are you looking for? * (select all that apply)
                   </label>
@@ -728,20 +735,18 @@ export default function Onboarding() {
                 <label className="text-sm font-medium text-foreground mb-2 block">
                   Location *
                 </label>
-                <div className={stepErrors[1]?.includes('Location') ? '!border-2 !border-destructive rounded-lg p-1' : ''}>
-                  <CitySearchInput
-                    value={city}
-                    onChange={(selectedCity, selectedCountry) => {
-                      setCity(selectedCity);
-                      setCountry(selectedCountry);
-                      // Clear error when user selects location
-                      if (stepErrors[1]?.includes('Location') && selectedCity.trim()) {
-                        setStepErrors({ ...stepErrors, [1]: stepErrors[1]?.filter(e => e !== 'Location') || [] });
-                      }
-                    }}
-                    placeholder="Search for your city"
-                  />
-                </div>
+                <CitySearchInput
+                  value={city}
+                  onChange={(selectedCity, selectedCountry) => {
+                    setCity(selectedCity);
+                    setCountry(selectedCountry);
+                    if (stepErrors[1]?.includes('Location') && selectedCity.trim()) {
+                      setStepErrors({ ...stepErrors, [1]: stepErrors[1]?.filter(e => e !== 'Location') || [] });
+                    }
+                  }}
+                  placeholder="Search for your city"
+                  error={stepErrors[1]?.includes('Location')}
+                />
               </div>
 
               {stepErrors[1] && stepErrors[1].length > 0 && (
@@ -756,13 +761,9 @@ export default function Onboarding() {
               )}
               
               <Button
+                type="button"
                 onClick={() => handleStepContinue(2)}
-                disabled={!birthDate || !gender || lookingFor.length === 0 || !city.trim()}
                 className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90"
-                style={{
-                  opacity: (!birthDate || !gender || lookingFor.length === 0 || !city.trim()) ? 0.5 : 1,
-                  cursor: (!birthDate || !gender || lookingFor.length === 0 || !city.trim()) ? 'not-allowed' : 'pointer'
-                }}
               >
                 Continue
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -794,17 +795,15 @@ export default function Onboarding() {
                   value={bio}
                   onChange={(e) => {
                     setBio(e.target.value);
-                    // Clear error when user starts typing
                     if (stepErrors[2]?.includes('Bio') && e.target.value.trim()) {
                       setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => e !== 'Bio') || [] });
                     }
                   }}
                   placeholder="Share a bit about who you are, your values, and what you're looking for in a co-parenting partnership..."
-                  style={{
-                    borderColor: stepErrors[2]?.includes('Bio') ? 'hsl(0 70% 60%)' : undefined,
-                    borderWidth: stepErrors[2]?.includes('Bio') ? '2px' : undefined
-                  }}
-                  className="min-h-[120px] text-base"
+                  className={cn(
+                    'min-h-[120px] text-base',
+                    stepErrors[2]?.includes('Bio') && 'border-destructive border-2 focus-visible:ring-destructive'
+                  )}
                   maxLength={500}
                 />
                 <p className="text-sm text-muted-foreground mt-1">
@@ -822,17 +821,15 @@ export default function Onboarding() {
                   value={profession}
                   onChange={(e) => {
                     setProfession(e.target.value);
-                    // Clear error when user starts typing
                     if (stepErrors[2]?.includes('Profession') && e.target.value.trim()) {
                       setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => e !== 'Profession') || [] });
                     }
                   }}
                   placeholder="e.g., Software Engineer, Teacher, Designer"
-                  style={{
-                    borderColor: stepErrors[2]?.includes('Profession') ? 'hsl(0 70% 60%)' : undefined,
-                    borderWidth: stepErrors[2]?.includes('Profession') ? '2px' : undefined
-                  }}
-                  className="h-14 text-lg"
+                  className={cn(
+                    'h-14 text-lg',
+                    stepErrors[2]?.includes('Profession') && 'border-destructive border-2 focus-visible:ring-destructive'
+                  )}
                 />
               </div>
 
@@ -898,7 +895,11 @@ export default function Onboarding() {
                     <Button
                       variant="outline"
                       onClick={() => setShowQualitiesSelector(true)}
-                      className="w-full"
+                      className={cn(
+                        'w-full',
+                        stepErrors[2]?.some((e) => e.includes('Core Values')) &&
+                          'border-destructive border-2 text-destructive'
+                      )}
                     >
                       <Heart className="w-4 h-4 mr-2" />
                       {qualities.length > 0 ? `Select values (${qualities.length}/3 selected)` : 'Select values'}
@@ -913,12 +914,11 @@ export default function Onboarding() {
                   Languages you speak *
                 </label>
                 <div className="space-y-2">
-                  <div 
-                    style={{
-                      borderColor: stepErrors[2]?.includes('Languages') ? 'hsl(0 70% 60%)' : undefined,
-                      borderWidth: stepErrors[2]?.includes('Languages') ? '2px' : undefined
-                    }}
-                    className="flex flex-wrap gap-2 p-3 rounded-lg border bg-card min-h-[60px] border-border"
+                  <div
+                    className={cn(
+                      'flex flex-wrap gap-2 p-3 rounded-lg border bg-card min-h-[60px]',
+                      stepErrors[2]?.includes('Languages') ? 'border-destructive border-2' : 'border-border'
+                    )}
                   >
                     {languages.length === 0 ? (
                       <span className="text-muted-foreground/60 text-sm">Select languages</span>
@@ -969,7 +969,10 @@ export default function Onboarding() {
                     <Button
                       variant="outline"
                       onClick={() => setShowLanguageSelector(true)}
-                      className="w-full"
+                      className={cn(
+                        'w-full',
+                        stepErrors[2]?.includes('Languages') && 'border-destructive border-2 text-destructive'
+                      )}
                     >
                       <Globe className="w-4 h-4 mr-2" />
                       {languages.length > 0 ? `Add more languages (${languages.length} selected)` : 'Select languages'}
@@ -983,13 +986,18 @@ export default function Onboarding() {
                 <label className="text-sm font-medium text-foreground mb-2 block">
                   Ethnicity *
                 </label>
-                <div className="space-y-2">
+                <div
+                  className={cn(
+                    'space-y-2 rounded-xl p-1 -m-1',
+                    stepErrors[2]?.includes('Ethnicity') && 'ring-2 ring-destructive'
+                  )}
+                >
                   {ethnicityOptions.map((option) => (
                     <button
                       key={option.value}
+                      type="button"
                       onClick={() => {
                         setEthnicity(option.value);
-                        // Clear error when user selects ethnicity
                         if (stepErrors[2]?.includes('Ethnicity')) {
                           setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => e !== 'Ethnicity') || [] });
                         }
@@ -997,8 +1005,6 @@ export default function Onboarding() {
                       className={`w-full p-4 rounded-lg border-2 text-left transition-colors ${
                         ethnicity === option.value
                           ? 'border-primary bg-primary/10'
-                          : stepErrors[2]?.includes('Ethnicity')
-                          ? '!border-destructive !border-2 bg-destructive/10'
                           : 'border-border hover:border-primary/50'
                       }`}
                     >
@@ -1013,13 +1019,18 @@ export default function Onboarding() {
                 <label className="text-sm font-medium text-foreground mb-2 block">
                   Drinking *
                 </label>
-                <div className="space-y-2">
+                <div
+                  className={cn(
+                    'space-y-2 rounded-xl p-1 -m-1',
+                    stepErrors[2]?.includes('Drinking') && 'ring-2 ring-destructive'
+                  )}
+                >
                   {drinkingOptions.map((option) => (
                     <button
                       key={option.value}
+                      type="button"
                       onClick={() => {
                         setDrinking(option.value);
-                        // Clear error when user selects drinking
                         if (stepErrors[2]?.includes('Drinking')) {
                           setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => e !== 'Drinking') || [] });
                         }
@@ -1027,8 +1038,6 @@ export default function Onboarding() {
                       className={`w-full p-4 rounded-lg border-2 text-left transition-colors ${
                         drinking === option.value
                           ? 'border-primary bg-primary/10'
-                          : stepErrors[2]?.includes('Drinking')
-                          ? '!border-destructive !border-2 bg-destructive/10'
                           : 'border-border hover:border-primary/50'
                       }`}
                     >
@@ -1044,13 +1053,18 @@ export default function Onboarding() {
                 <label className="text-sm font-medium text-foreground mb-2 block">
                   Smoking *
                 </label>
-                <div className="space-y-2">
+                <div
+                  className={cn(
+                    'space-y-2 rounded-xl p-1 -m-1',
+                    stepErrors[2]?.includes('Smoking') && 'ring-2 ring-destructive'
+                  )}
+                >
                   {smokingOptions.map((option) => (
                     <button
                       key={option.value}
+                      type="button"
                       onClick={() => {
                         setSmoking(option.value);
-                        // Clear error when user selects smoking
                         if (stepErrors[2]?.includes('Smoking')) {
                           setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => e !== 'Smoking') || [] });
                         }
@@ -1058,8 +1072,6 @@ export default function Onboarding() {
                       className={`w-full p-4 rounded-lg border-2 text-left transition-colors ${
                         smoking === option.value
                           ? 'border-primary bg-primary/10'
-                          : stepErrors[2]?.includes('Smoking')
-                          ? '!border-destructive !border-2 bg-destructive/10'
                           : 'border-border hover:border-primary/50'
                       }`}
                     >
@@ -1090,39 +1102,9 @@ export default function Onboarding() {
                   Back
                 </Button>
                 <Button
+                  type="button"
                   onClick={() => handleStepContinue(3)}
-                  disabled={
-                    !bio.trim() ||
-                    qualities.length !== 3 ||
-                    !profession.trim() ||
-                    languages.length === 0 ||
-                    !ethnicity ||
-                    !drinking ||
-                    !smoking
-                  }
                   className="flex-1 h-12 bg-primary text-primary-foreground hover:bg-primary/90"
-                  style={{
-                    opacity:
-                      !bio.trim() ||
-                      qualities.length !== 3 ||
-                      !profession.trim() ||
-                      languages.length === 0 ||
-                      !ethnicity ||
-                      !drinking ||
-                      !smoking
-                        ? 0.5
-                        : 1,
-                    cursor:
-                      !bio.trim() ||
-                      qualities.length !== 3 ||
-                      !profession.trim() ||
-                      languages.length === 0 ||
-                      !ethnicity ||
-                      !drinking ||
-                      !smoking
-                        ? 'not-allowed'
-                        : 'pointer'
-                  }}
                 >
                   Continue
                   <ArrowRight className="w-5 h-5 ml-2" />
