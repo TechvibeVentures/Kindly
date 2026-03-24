@@ -770,7 +770,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 2: Bio, core values, profession, languages, lifestyle */}
+          {/* Step 2: Bio, profession, core values, languages, lifestyle */}
           {step === 2 && (
             <div className="space-y-6">
               <div className="text-center">
@@ -810,6 +810,30 @@ export default function Onboarding() {
                 <p className="text-sm text-muted-foreground mt-1">
                   {bio.length}/500 characters
                 </p>
+              </div>
+
+              {/* Profession */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Profession *
+                </label>
+                <Input
+                  type="text"
+                  value={profession}
+                  onChange={(e) => {
+                    setProfession(e.target.value);
+                    // Clear error when user starts typing
+                    if (stepErrors[2]?.includes('Profession') && e.target.value.trim()) {
+                      setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => e !== 'Profession') || [] });
+                    }
+                  }}
+                  placeholder="e.g., Software Engineer, Teacher, Designer"
+                  style={{
+                    borderColor: stepErrors[2]?.includes('Profession') ? 'hsl(0 70% 60%)' : undefined,
+                    borderWidth: stepErrors[2]?.includes('Profession') ? '2px' : undefined
+                  }}
+                  className="h-14 text-lg"
+                />
               </div>
 
               {/* Core values */}
@@ -881,30 +905,6 @@ export default function Onboarding() {
                     </Button>
                   )}
                 </div>
-              </div>
-
-              {/* Profession */}
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  Profession *
-                </label>
-                <Input
-                  type="text"
-                  value={profession}
-                  onChange={(e) => {
-                    setProfession(e.target.value);
-                    // Clear error when user starts typing
-                    if (stepErrors[2]?.includes('Profession') && e.target.value.trim()) {
-                      setStepErrors({ ...stepErrors, [2]: stepErrors[2]?.filter(e => e !== 'Profession') || [] });
-                    }
-                  }}
-                  placeholder="e.g., Software Engineer, Teacher, Designer"
-                  style={{
-                    borderColor: stepErrors[2]?.includes('Profession') ? 'hsl(0 70% 60%)' : undefined,
-                    borderWidth: stepErrors[2]?.includes('Profession') ? '2px' : undefined
-                  }}
-                  className="h-14 text-lg"
-                />
               </div>
 
               {/* Languages */}
