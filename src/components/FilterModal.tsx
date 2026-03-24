@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, RotateCcw, MapPin, Globe, ChevronRight, Heart, MessageCircle } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { X, RotateCcw, MapPin, Globe, ChevronRight, Heart, MessageCircle, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -37,10 +37,11 @@ const defaultFiltersState = {
   ethnicity: [] as string[],
   languages: [] as string[],
   lookingFor: [] as string[],
+  gender: [] as string[],
   custodyRange: [0, 100] as [number, number]
 };
 
-type EditField = 'ethnicity' | 'languages' | 'lookingFor' | 'location' | null;
+type EditField = 'ethnicity' | 'languages' | 'lookingFor' | 'gender' | 'location' | null;
 
 export function FilterModal({ isOpen, onClose }: FilterModalProps) {
   const { filters, setFilters } = useApp();
@@ -48,9 +49,22 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
   const [localFilters, setLocalFilters] = useState({ ...defaultFiltersState, ...filters });
   const [editField, setEditField] = useState<EditField>(null);
 
+  const genderFilterOptions = useMemo(
+    () => [
+      { value: 'male', label: t.filterGenderMale },
+      { value: 'female', label: t.filterGenderFemale },
+      { value: 'non-binary', label: t.filterGenderNonBinary },
+    ],
+    [t]
+  );
+
   useEffect(() => {
     if (isOpen) {
-      setLocalFilters({ ...defaultFiltersState, ...filters });
+      setLocalFilters({
+        ...defaultFiltersState,
+        ...filters,
+        gender: filters.gender ?? [],
+      });
     }
   }, [isOpen, filters]);
 
@@ -72,6 +86,7 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
     if ((localFilters.ethnicity?.length ?? 0) > 0) count++;
     if ((localFilters.languages?.length ?? 0) > 0) count++;
     if ((localFilters.lookingFor?.length ?? 0) > 0) count++;
+    if ((localFilters.gender?.length ?? 0) > 0) count++;
     if (localFilters.custodyRange?.[0] !== 0 || localFilters.custodyRange?.[1] !== 100) count++;
     return count;
   };
@@ -98,6 +113,14 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
       return lookingForOptions.find(o => o.value === localFilters.lookingFor[0])?.label || '';
     }
     return `${localFilters.lookingFor.length} selected`;
+  };
+
+  const getGenderDisplay = () => {
+    if (!localFilters.gender?.length) return '';
+    if (localFilters.gender.length === 1) {
+      return genderFilterOptions.find((o) => o.value === localFilters.gender[0])?.label || '';
+    }
+    return `${localFilters.gender.length} selected`;
   };
 
   const getCustodyDisplay = () => {
@@ -248,6 +271,12 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
                       value={getEthnicityDisplay()} 
                       onClick={() => setEditField('ethnicity')} 
                     />
+                    <FilterRow
+                      icon={User}
+                      label={t.gender}
+                      value={getGenderDisplay()}
+                      onClick={() => setEditField('gender')}
+                    />
                     <FilterRow 
                       icon={MessageCircle}
                       label={t.language} 
@@ -351,6 +380,27 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
             ...prev,
             ethnicity: Array.isArray(selected) ? selected : [selected]
           }))}
+          multiple
+          showSaveButton
+          onSave={() => setEditField(null)}
+        />
+      </ProfileEditSheet>
+
+      <ProfileEditSheet
+        open={editField === 'gender'}
+        onOpenChange={(open) => !open && setEditField(null)}
+        title={t.gender}
+        subtitle={t.filterGenderSelectHint}
+      >
+        <ProfileOptionList
+          options={genderFilterOptions}
+          value={localFilters.gender || []}
+          onChange={(selected) =>
+            setLocalFilters((prev) => ({
+              ...prev,
+              gender: Array.isArray(selected) ? selected : [selected],
+            }))
+          }
           multiple
           showSaveButton
           onSave={() => setEditField(null)}

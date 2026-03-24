@@ -37,6 +37,10 @@ export type Translations = {
   potentialCoParents: string;
   noMatches: string;
   adjustFilters: string;
+  filterGenderMale: string;
+  filterGenderFemale: string;
+  filterGenderNonBinary: string;
+  filterGenderSelectHint: string;
   
   // Profile
   manageAccount: string;
@@ -530,6 +534,10 @@ const translations: Record<Language, Translations> = {
     potentialCoParents: 'potential co-parents match your criteria',
     noMatches: 'No candidates match your filters.',
     adjustFilters: 'Adjust Filters',
+    filterGenderMale: 'Male',
+    filterGenderFemale: 'Female',
+    filterGenderNonBinary: 'Non-binary',
+    filterGenderSelectHint: 'Select one or more, or leave empty for any gender',
     
     // Profile
     manageAccount: 'Manage your account',
@@ -1027,6 +1035,10 @@ const translations: Record<Language, Translations> = {
     potentialCoParents: 'potenzielle Co-Eltern entsprechen Ihren Kriterien',
     noMatches: 'Keine Kandidaten entsprechen Ihren Filtern.',
     adjustFilters: 'Filter anpassen',
+    filterGenderMale: 'Männlich',
+    filterGenderFemale: 'Weiblich',
+    filterGenderNonBinary: 'Nicht-binär',
+    filterGenderSelectHint: 'Mehrere wählbar oder leer lassen für alle Geschlechter',
     
     // Profile
     manageAccount: 'Konto verwalten',
@@ -1525,6 +1537,10 @@ const translations: Record<Language, Translations> = {
     potentialCoParents: 'co-parents potentiels correspondent à vos critères',
     noMatches: 'Aucun candidat ne correspond à vos filtres.',
     adjustFilters: 'Ajuster les filtres',
+    filterGenderMale: 'Homme',
+    filterGenderFemale: 'Femme',
+    filterGenderNonBinary: 'Non binaire',
+    filterGenderSelectHint: 'Choisissez une ou plusieurs options, ou laissez vide pour tous',
     
     // Profile
     manageAccount: 'Gérer votre compte',
@@ -2023,6 +2039,10 @@ const translations: Record<Language, Translations> = {
     potentialCoParents: 'co-padres potenciales coinciden con sus criterios',
     noMatches: 'Ningún candidato coincide con sus filtros.',
     adjustFilters: 'Ajustar filtros',
+    filterGenderMale: 'Hombre',
+    filterGenderFemale: 'Mujer',
+    filterGenderNonBinary: 'No binario',
+    filterGenderSelectHint: 'Seleccione uno o más, o deje vacío para cualquier género',
     
     // Profile
     manageAccount: 'Gestionar su cuenta',
@@ -2521,6 +2541,10 @@ const translations: Record<Language, Translations> = {
     potentialCoParents: 'co-genitori potenziali corrispondono ai tuoi criteri',
     noMatches: 'Nessun candidato corrisponde ai tuoi filtri.',
     adjustFilters: 'Modifica filtri',
+    filterGenderMale: 'Uomo',
+    filterGenderFemale: 'Donna',
+    filterGenderNonBinary: 'Non binario',
+    filterGenderSelectHint: 'Seleziona una o più opzioni, o lascia vuoto per tutti i generi',
     
     // Profile
     manageAccount: 'Gestisci il tuo account',

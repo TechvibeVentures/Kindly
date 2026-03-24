@@ -43,9 +43,8 @@ export type CandidateProfile = Tables<'profiles'> & {
 };
 
 /**
- * Get all public candidate profiles
- * Returns all public, active, male profiles (excluding current user's own profile)
- * Only returns male profiles (for Discover page)
+ * Get all public candidate profiles for Discover (any gender).
+ * Excludes the signed-in user's own profile by user_id and profile id.
  */
 export async function getAllCandidates(): Promise<CandidateProfile[]> {
   // Get current user ID and profile ID to exclude own profile

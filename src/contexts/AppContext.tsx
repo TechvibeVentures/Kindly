@@ -18,6 +18,8 @@ interface Filters {
   ethnicity: string[];
   languages: string[];
   lookingFor: string[];
+  /** Empty = any gender; values: male, female, non-binary */
+  gender: string[];
   custodyRange: [number, number];
 }
 
@@ -46,6 +48,7 @@ const defaultFilters: Filters = {
   ethnicity: [],
   languages: [],
   lookingFor: [],
+  gender: [],
   custodyRange: [0, 100]
 };
 
@@ -61,11 +64,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { data: profiles = [], isLoading: candidatesLoading } = useCandidates();
   const { data: currentUserProfile } = useCurrentUserProfile();
   const candidates = useMemo(() => {
-    const mapped = mapProfilesToCandidates(profiles, currentUserProfile);
-    const ownProfileId = currentUserProfile?.id;
-    if (!ownProfileId) return mapped;
-    return mapped.filter(c => c.id !== ownProfileId);
-  }, [profiles, currentUserProfile]);
+    const ownUserId = user?.id ?? null;
+    const ownProfileId = currentUserProfile?.id ?? null;
+    const othersProfiles = profiles.filter((p) => {
+      if (ownUserId && p.user_id === ownUserId) return false;
+      if (ownProfileId && p.id === ownProfileId) return false;
+      return true;
+    });
+    return mapProfilesToCandidates(othersProfiles, currentUserProfile);
+  }, [profiles, currentUserProfile, user?.id]);
 
   // Load app_mode and photo_url from profile so nav and header reflect current user
   useEffect(() => {
@@ -135,8 +142,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       candidate.involvement?.includes('40/60') ? 40 : 50;
     const custodyMatch = involvementPercent >= (filters.custodyRange?.[0] ?? 0) && 
       involvementPercent <= (filters.custodyRange?.[1] ?? 100);
-    
-    return ageMatch && ethnicityMatch && languageMatch && lookingForMatch && custodyMatch;
+    const genderMatch =
+      !filters.gender?.length ||
+      (candidate.gender && filters.gender.includes(candidate.gender));
+
+    return ageMatch && ethnicityMatch && languageMatch && lookingForMatch && custodyMatch && genderMatch;
   }), [candidates, filters]);
 
   const getTopicStatus = (topic: Topic): 'none' | 'partial' | 'covered' => {
