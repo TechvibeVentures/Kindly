@@ -6,11 +6,68 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { CandidateCard } from '@/components/CandidateCard';
 import { FilterModal } from '@/components/FilterModal';
 import { Button } from '@/components/ui/button';
+import { ethnicityLabels, genderOptions } from '@/lib/utils/candidateLabels';
+import { getLookingForLabel } from '@/lib/lookingForOptions';
 
 export default function Discover() {
-  const { filteredCandidates } = useApp();
+  const { filteredCandidates, filters } = useApp();
   const { t } = useLanguage();
   const [showFilters, setShowFilters] = useState(false);
+
+  const filterBadges = (() => {
+    const badges: string[] = [];
+
+    const [ageMin, ageMax] = filters.ageRange ?? [25, 50];
+    if (ageMin !== 25 || ageMax !== 50) badges.push(`Age ${ageMin}-${ageMax}`);
+
+    const loc = filters.location?.trim();
+    if (loc) badges.push(`Location: ${loc}`);
+
+    const distance = filters.maxDistance ?? 500;
+    if (distance !== 500) badges.push(`Distance: ${distance} km`);
+
+    if (filters.openToRelocation) badges.push('Open to relocation');
+
+    if (filters.ethnicity?.length) {
+      badges.push(
+        `Ethnicity: ${filters.ethnicity
+          .map((v) => ethnicityLabels[v] ?? v)
+          .slice(0, 3)
+          .join(', ')}`
+      );
+    }
+
+    if (filters.languages?.length) {
+      badges.push(`Languages: ${filters.languages.slice(0, 3).join(', ')}`);
+    }
+
+    if (filters.lookingFor?.length) {
+      badges.push(
+        `Looking for: ${filters.lookingFor
+          .slice(0, 2)
+          .map(getLookingForLabel)
+          .join(', ')}`
+      );
+    }
+
+    if (filters.gender?.length) {
+      badges.push(
+        `Gender: ${filters.gender
+          .map((v) => genderOptions.find((o) => o.value === v)?.label ?? v)
+          .slice(0, 2)
+          .join(', ')}`
+      );
+    }
+
+    const [custMin, custMax] = filters.custodyRange ?? [0, 100];
+    if (custMin !== 0 || custMax !== 100) badges.push(`Custody: ${custMin}%-${custMax}%`);
+
+    return badges;
+  })();
+
+  const maxBadgesToShow = 3;
+  const visibleBadges = filterBadges.slice(0, maxBadgesToShow);
+  const extraBadges = Math.max(0, filterBadges.length - maxBadgesToShow);
 
   return (
     <div className="pb-24 md:pb-0">
@@ -31,6 +88,17 @@ export default function Discover() {
               </Button>
             </div>
           </div>
+
+          {filterBadges.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {visibleBadges.map((b, idx) => (
+                <span key={`${b}-${idx}`} className="kindly-chip kindly-chip-primary">
+                  {b}
+                </span>
+              ))}
+              {extraBadges > 0 && <span className="kindly-chip">+{extraBadges} more</span>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -53,6 +121,17 @@ export default function Discover() {
           </motion.button>
         </div>
       </div>
+
+      {filterBadges.length > 0 && (
+        <div className="md:hidden px-4 pt-3 pb-2 flex flex-wrap gap-2">
+          {visibleBadges.map((b, idx) => (
+            <span key={`${b}-${idx}`} className="kindly-chip kindly-chip-primary">
+              {b}
+            </span>
+          ))}
+          {extraBadges > 0 && <span className="kindly-chip">+{extraBadges} more</span>}
+        </div>
+      )}
 
       {/* Desktop Grid View */}
       <div className="hidden md:block max-w-7xl mx-auto px-6 py-8">
