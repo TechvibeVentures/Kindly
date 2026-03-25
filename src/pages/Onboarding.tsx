@@ -140,12 +140,9 @@ export default function Onboarding() {
           }
           
           setIsInitializing(false);
-        })
-        .catch((error) => {
+        }, (error) => {
           console.error('Error in profile fetch:', error);
-          if (isMounted) {
-            setIsInitializing(false);
-          }
+          if (isMounted) setIsInitializing(false);
         });
     });
 
@@ -690,7 +687,7 @@ export default function Onboarding() {
                 </div>
               )}
 
-              {/* Custody / time with child — only relevant when co-parenting is a goal */}
+              {/* Custody / share of care — only relevant when co-parenting is a goal */}
               {gender && wantsCoParenting && (
                 <div className="space-y-3 rounded-xl border border-border bg-card/50 p-4">
                   <div className="flex items-start gap-3">
@@ -702,9 +699,9 @@ export default function Onboarding() {
                         Custody preference
                       </label>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        Roughly how much time you would want to care for the child yourself in a co-parenting setup.
-                        This helps others see if your expectations align (for example closer to equal shared care vs. a
-                        different split). You can always refine this later in your profile.
+                        Roughly what percentage of the child\'s care you would want to have yourself in a co-parenting
+                        setup. This helps others see if your expectations align (for example closer to equal shared care
+                        vs. a different split). You can always refine this later in your profile.
                       </p>
                     </div>
                   </div>
