@@ -189,7 +189,7 @@ export function DatePickerDropdown({
         <SelectTrigger
           className={cn(
             "h-14 text-lg",
-            error && "border-red-500 border-2"
+            error && "border-destructive border-2"
           )}
         >
           <SelectValue placeholder="Day" />
@@ -212,7 +212,7 @@ export function DatePickerDropdown({
         <SelectTrigger
           className={cn(
             "h-14 text-lg flex-1",
-            error && "border-red-500 border-2"
+            error && "border-destructive border-2"
           )}
         >
           <SelectValue placeholder="Month" />
@@ -235,7 +235,7 @@ export function DatePickerDropdown({
         <SelectTrigger
           className={cn(
             "h-14 text-lg",
-            error && "border-red-500 border-2"
+            error && "border-destructive border-2"
           )}
         >
           <SelectValue placeholder="Year" />

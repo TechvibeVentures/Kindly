@@ -5,6 +5,7 @@
 
 import type { CandidateProfile } from '@/lib/db/candidates';
 import type { Profile } from '@/lib/db/profiles';
+import { normalizeLookingForValue } from '@/lib/lookingForOptions';
 
 interface MatchFactors {
   values: number; // Core values overlap
@@ -252,11 +253,15 @@ function calculateLookingForMatch(
   candidateProfile: CandidateProfile
 ): number {
   // looking_for is an array in the database
-  const userLookingFor = (userProfile.looking_for || []) as string[];
+  const userLookingFor = ((userProfile.looking_for || []) as string[]).map(normalizeLookingForValue);
   // CandidateProfile may have looking_for as string (backward compatibility) or array
-  const candidateLookingFor = Array.isArray(candidateProfile.looking_for) 
-    ? candidateProfile.looking_for 
-    : (candidateProfile.looking_for ? [candidateProfile.looking_for] : []);
+  const candidateLookingFor = (
+    Array.isArray(candidateProfile.looking_for)
+      ? candidateProfile.looking_for
+      : candidateProfile.looking_for
+        ? [candidateProfile.looking_for]
+        : []
+  ).map(normalizeLookingForValue);
 
   if (userLookingFor.length === 0 || candidateLookingFor.length === 0) {
     return -1; // No data

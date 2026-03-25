@@ -25,6 +25,7 @@ import { uploadPhoto } from '@/lib/utils/photoUpload';
 import { useCurrentUserProfile, useUpdateProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { LOOKING_FOR_OPTIONS, getLookingForLabel } from '@/lib/lookingForOptions';
 
 interface Child {
   id: string;
@@ -302,18 +303,6 @@ const custodySchoolArrangementOptions = [
 const custodyVacationArrangementOptions = [
   { value: 'flexible', label: 'Flexible arrangement', description: 'Open to discussion' },
   { value: 'specific', label: 'Specific conditions', description: 'Define specific conditions' },
-];
-
-const lookingForOptionsWoman = [
-  { value: 'classic-relationship', label: 'Classic relationship', description: 'Looking for a romantic partner' },
-  { value: 'joint-custody', label: 'Joint custody', description: 'Co-parenting with shared responsibilities' },
-  { value: 'sperm-donation', label: 'Sperm donation', description: 'Looking for a sperm donor' },
-];
-
-const lookingForOptionsMan = [
-  { value: 'classic-relationship', label: 'Classic relationship', description: 'Looking for a romantic partner' },
-  { value: 'joint-custody', label: 'Joint custody', description: 'Co-parenting with shared responsibilities' },
-  { value: 'sperm-donation', label: 'Sperm donation', description: 'Open to being a sperm donor' },
 ];
 
 type EditField = 
@@ -814,10 +803,7 @@ export default function ProfileEdit() {
                   <ProfileRow 
                     icon={Heart} 
                     label={profile.gender === 'man' ? t.openTo : t.lookingFor} 
-                    value={profile.lookingFor.map(v => {
-                      const options = profile.gender === 'man' ? lookingForOptionsMan : lookingForOptionsWoman;
-                      return getLabel(options, v);
-                    }).join(', ')} 
+                    value={profile.lookingFor.map((v) => getLookingForLabel(v)).join(', ')} 
                     onClick={() => setEditField('lookingFor')} 
                   />
                   <ProfileRow 
@@ -1005,10 +991,7 @@ export default function ProfileEdit() {
               <ProfileRow 
                 icon={Heart} 
                 label={profile.gender === 'man' ? t.openTo : t.lookingFor} 
-                value={profile.lookingFor.map(v => {
-                  const options = profile.gender === 'man' ? lookingForOptionsMan : lookingForOptionsWoman;
-                  return getLabel(options, v);
-                }).join(', ')} 
+                value={profile.lookingFor.map((v) => getLookingForLabel(v)).join(', ')} 
                 onClick={() => setEditField('lookingFor')} 
               />
               <ProfileRow 
@@ -1472,7 +1455,7 @@ export default function ProfileEdit() {
         icon={Heart}
       >
         <ProfileOptionList 
-          options={profile.gender === 'man' ? lookingForOptionsMan : lookingForOptionsWoman} 
+          options={LOOKING_FOR_OPTIONS} 
           value={profile.lookingFor} 
           onChange={(v) => updateProfile('lookingFor', v as string[])} 
           multiple

@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { X, RotateCcw, MapPin, Globe, ChevronRight, Heart, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { allLanguages, involvementOptions } from '@/lib/utils/candidateLabels';
+import { allLanguages } from '@/lib/utils/candidateLabels';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { ProfileEditSheet } from '@/components/ProfileEditSheet';
 import { ProfileOptionList } from '@/components/ProfileOptionList';
 import { CitySearchInput } from '@/components/CitySearchInput';
+import { lookingForFilterOptions } from '@/lib/lookingForOptions';
+import { cn } from '@/lib/utils';
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -26,11 +28,7 @@ const ethnicityOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-const lookingForOptions = [
-  { value: 'classic-relationship', label: 'Classic relationship' },
-  { value: 'joint-custody', label: 'Joint custody' },
-  { value: 'sperm-donation', label: 'Sperm donation' },
-];
+const lookingForOptions = lookingForFilterOptions();
 
 const defaultFiltersState = {
   ageRange: [25, 50] as [number, number],
@@ -40,6 +38,7 @@ const defaultFiltersState = {
   ethnicity: [] as string[],
   languages: [] as string[],
   lookingFor: [] as string[],
+  gender: [] as string[],
   custodyRange: [0, 100] as [number, number]
 };
 
@@ -51,9 +50,22 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
   const [localFilters, setLocalFilters] = useState({ ...defaultFiltersState, ...filters });
   const [editField, setEditField] = useState<EditField>(null);
 
+  const genderFilterOptions = useMemo(
+    () => [
+      { value: 'male', label: t.filterGenderMale },
+      { value: 'female', label: t.filterGenderFemale },
+      { value: 'non-binary', label: t.filterGenderNonBinary },
+    ],
+    [t]
+  );
+
   useEffect(() => {
     if (isOpen) {
-      setLocalFilters({ ...defaultFiltersState, ...filters });
+      setLocalFilters({
+        ...defaultFiltersState,
+        ...filters,
+        gender: filters.gender ?? [],
+      });
     }
   }, [isOpen, filters]);
 
@@ -75,6 +87,7 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
     if ((localFilters.ethnicity?.length ?? 0) > 0) count++;
     if ((localFilters.languages?.length ?? 0) > 0) count++;
     if ((localFilters.lookingFor?.length ?? 0) > 0) count++;
+    if ((localFilters.gender?.length ?? 0) > 0) count++;
     if (localFilters.custodyRange?.[0] !== 0 || localFilters.custodyRange?.[1] !== 100) count++;
     return count;
   };
@@ -171,6 +184,43 @@ export function FilterModal({ isOpen, onClose }: FilterModalProps) {
               </div>
 
               <div className="overflow-y-auto max-h-[60vh] px-4 py-4 space-y-6">
+                {/* Gender — top, inline tags */}
+                <div>
+                  <p className="font-medium mb-1">{t.gender}</p>
+                  <p className="text-xs text-muted-foreground mb-3 leading-snug">
+                    {t.filterGenderSelectHint}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {genderFilterOptions.map((opt) => {
+                      const selected = localFilters.gender?.includes(opt.value) ?? false;
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() =>
+                            setLocalFilters((prev) => {
+                              const g = prev.gender || [];
+                              const has = g.includes(opt.value);
+                              return {
+                                ...prev,
+                                gender: has ? g.filter((x) => x !== opt.value) : [...g, opt.value],
+                              };
+                            })
+                          }
+                          className={cn(
+                            'px-4 py-2.5 rounded-full text-sm font-medium border-2 transition-colors',
+                            selected
+                              ? 'border-primary bg-primary/10 text-foreground'
+                              : 'border-border bg-card text-muted-foreground hover:border-primary/40'
+                          )}
+                        >
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Age Range */}
                 <div>
                   <div className="flex justify-between items-center mb-3">

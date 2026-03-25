@@ -9,3 +9,6 @@ verify_jwt = false
 
 [functions.admin-delete-user]
 verify_jwt = false
+
+[functions.send-admin-invitation]
+verify_jwt = true

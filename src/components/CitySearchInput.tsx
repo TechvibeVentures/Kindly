@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, MapPin } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
 
 const popularCities = [
   { city: 'Zurich', country: 'Switzerland' },
@@ -21,9 +22,16 @@ const popularCities = [
 ];
 
 interface CityResult { city: string; country: string; displayName: string; }
-interface CitySearchInputProps { value: string; onChange: (city: string, country: string) => void; placeholder?: string; onCancel?: () => void; }
+interface CitySearchInputProps {
+  value: string;
+  onChange: (city: string, country: string) => void;
+  placeholder?: string;
+  onCancel?: () => void;
+  /** Highlights the control when validation failed (e.g. onboarding). */
+  error?: boolean;
+}
 
-export function CitySearchInput({ value, onChange, placeholder, onCancel }: CitySearchInputProps) {
+export function CitySearchInput({ value, onChange, placeholder, onCancel, error }: CitySearchInputProps) {
   const [query, setQuery] = useState(value);
   const [results, setResults] = useState<CityResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +84,12 @@ export function CitySearchInput({ value, onChange, placeholder, onCancel }: City
   };
 
   return (
-    <div className="flex flex-col">
+    <div
+      className={cn(
+        'flex flex-col rounded-xl border border-border bg-card overflow-hidden',
+        error && 'border-destructive border-2 ring-2 ring-destructive/25'
+      )}
+    >
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-secondary/30">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />

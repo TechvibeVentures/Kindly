@@ -4,6 +4,7 @@ import type { Topic } from '@/data/conversations';
 import { useAuth } from '@/hooks/useAuth';
 import { useCandidates } from '@/hooks/useCandidates';
 import { mapProfilesToCandidates } from '@/lib/utils/candidateMapper';
+import { normalizeLookingForValue } from '@/lib/lookingForOptions';
 import { useCurrentUserProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -17,6 +18,8 @@ interface Filters {
   ethnicity: string[];
   languages: string[];
   lookingFor: string[];
+  /** Empty = any gender; values: male, female, non-binary */
+  gender: string[];
   custodyRange: [number, number];
 }
 
@@ -45,6 +48,7 @@ const defaultFilters: Filters = {
   ethnicity: [],
   languages: [],
   lookingFor: [],
+  gender: [],
   custodyRange: [0, 100]
 };
 
@@ -60,11 +64,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { data: profiles = [], isLoading: candidatesLoading } = useCandidates();
   const { data: currentUserProfile } = useCurrentUserProfile();
   const candidates = useMemo(() => {
-    const mapped = mapProfilesToCandidates(profiles, currentUserProfile);
-    const ownProfileId = currentUserProfile?.id;
-    if (!ownProfileId) return mapped;
-    return mapped.filter(c => c.id !== ownProfileId);
-  }, [profiles, currentUserProfile]);
+    const ownUserId = user?.id ?? null;
+    const ownProfileId = currentUserProfile?.id ?? null;
+    const othersProfiles = profiles.filter((p) => {
+      if (ownUserId && p.user_id === ownUserId) return false;
+      if (ownProfileId && p.id === ownProfileId) return false;
+      return true;
+    });
+    return mapProfilesToCandidates(othersProfiles, currentUserProfile);
+  }, [profiles, currentUserProfile, user?.id]);
 
   // Load app_mode and photo_url from profile so nav and header reflect current user
   useEffect(() => {
@@ -117,15 +125,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
       (candidate.ethnicity && filters.ethnicity.includes(candidate.ethnicity));
     const languageMatch = !filters.languages?.length || 
       (candidate.languages?.length ? filters.languages.some(l => candidate.languages.includes(l)) : true);
-    const lookingForMatch = !filters.lookingFor?.length || 
-      (candidate.lookingFor && filters.lookingFor.some(term => candidate.lookingFor.toLowerCase().includes(term.toLowerCase())));
+    const lookingForMatch = !filters.lookingFor?.length || (() => {
+      if (candidate.lookingForTags?.length) {
+        const tags = new Set(candidate.lookingForTags.map(normalizeLookingForValue));
+        return filters.lookingFor!.some((f) => tags.has(normalizeLookingForValue(f)));
+      }
+      return (
+        candidate.lookingFor &&
+        filters.lookingFor!.some((term) =>
+          candidate.lookingFor.toLowerCase().includes(term.toLowerCase())
+        )
+      );
+    })();
     const involvementPercent = candidate.involvement?.includes('50/50') ? 50 :
       candidate.involvement?.includes('60/40') ? 60 :
       candidate.involvement?.includes('40/60') ? 40 : 50;
     const custodyMatch = involvementPercent >= (filters.custodyRange?.[0] ?? 0) && 
       involvementPercent <= (filters.custodyRange?.[1] ?? 100);
-    
-    return ageMatch && ethnicityMatch && languageMatch && lookingForMatch && custodyMatch;
+    const genderMatch =
+      !filters.gender?.length ||
+      (candidate.gender && filters.gender.includes(candidate.gender));
+
+    return ageMatch && ethnicityMatch && languageMatch && lookingForMatch && custodyMatch && genderMatch;
   }), [candidates, filters]);
 
   const getTopicStatus = (topic: Topic): 'none' | 'partial' | 'covered' => {

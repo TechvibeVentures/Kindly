@@ -75,6 +75,7 @@ const handler = async (req: Request): Promise<Response> => {
       name: name.trim(),
       status: "pending",
       created_by: null,
+      from_public_request: true,
     });
     if (insertError) {
       console.error("Failed to insert invitation:", insertError);
@@ -90,7 +91,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (RESEND_API_KEY) {
       try {
         await sendEmail(
-          ["info@impactfuel.ch"],
+          ["mail@techvibe.ch"],
           `New Kindly Invitation Request: ${name}`,
           `
             <h1>New Founding Candidate Request</h1>
@@ -133,6 +134,7 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(
       JSON.stringify({
         success: true,
+        databaseStored: true,
         adminEmailSent,
         confirmationEmailSent,
       }),

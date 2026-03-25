@@ -1,8 +1,11 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import kindlyLogo from '@/assets/kindly-logo.png';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { navigateToLandingTop } from '@/lib/landingNavigation';
 
 export function DesktopFooter() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
 
   return (
@@ -10,7 +13,14 @@ export function DesktopFooter() {
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-4 gap-8">
           <div className="col-span-1">
-            <img src={kindlyLogo} alt="Kindly" className="h-8 mb-4" />
+            <button
+              type="button"
+              onClick={() => navigateToLandingTop(navigate, location)}
+              className="mb-4 block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="Kindly home"
+            >
+              <img src={kindlyLogo} alt="Kindly" className="h-8" />
+            </button>
             <p className="text-sm text-muted-foreground">{t.findYourCoParent}</p>
           </div>
           <div>

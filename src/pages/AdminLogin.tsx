@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { navigateToLandingTop } from '@/lib/landingNavigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +15,7 @@ const passwordSchema = z.string().min(6, 'Password must be at least 6 characters
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -103,7 +105,14 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="p-4 flex items-center justify-center">
-        <img src={kindlyLogo} alt="Kindly" className="h-8" />
+        <button
+          type="button"
+          onClick={() => navigateToLandingTop(navigate, location)}
+          className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Kindly home"
+        >
+          <img src={kindlyLogo} alt="Kindly" className="h-8" />
+        </button>
       </div>
 
       {/* Content */}

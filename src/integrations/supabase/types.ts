@@ -61,8 +61,12 @@ export type Database = {
           created_by: string | null
           email: string | null
           expires_at: string
+          from_public_request: boolean
           id: string
+          invitation_kind: string
+          max_redemptions: number | null
           name: string | null
+          redemption_count: number
           status: Database["public"]["Enums"]["invitation_status"]
         }
         Insert: {
@@ -73,8 +77,12 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           expires_at?: string
+          from_public_request?: boolean
           id?: string
+          invitation_kind?: string
+          max_redemptions?: number | null
           name?: string | null
+          redemption_count?: number
           status?: Database["public"]["Enums"]["invitation_status"]
         }
         Update: {
@@ -85,11 +93,44 @@ export type Database = {
           created_by?: string | null
           email?: string | null
           expires_at?: string
+          from_public_request?: boolean
           id?: string
+          invitation_kind?: string
+          max_redemptions?: number | null
           name?: string | null
+          redemption_count?: number
           status?: Database["public"]["Enums"]["invitation_status"]
         }
         Relationships: []
+      }
+      invitation_redemptions: {
+        Row: {
+          created_at: string
+          id: string
+          invitation_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invitation_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invitation_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_redemptions_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profile_children: {
         Row: {

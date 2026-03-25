@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { navigateToLandingTop } from '@/lib/landingNavigation';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,8 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import kindlyLogo from '@/assets/kindly-logo.png';
 import { format } from 'date-fns';
 
@@ -61,6 +64,9 @@ interface Invitation {
   status: string;
   expires_at: string;
   created_at: string;
+  invitation_kind?: string;
+  max_redemptions?: number | null;
+  redemption_count?: number;
 }
 
 interface InvitationRequest {
@@ -75,6 +81,7 @@ interface InvitationRequest {
 
 export default function Admin() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -83,6 +90,8 @@ export default function Admin() {
   const [searchTerm, setSearchTerm] = useState('');
   const [newInviteEmail, setNewInviteEmail] = useState('');
   const [newInviteName, setNewInviteName] = useState('');
+  const [newInviteCampaign, setNewInviteCampaign] = useState(false);
+  const [newInviteMaxRedemptions, setNewInviteMaxRedemptions] = useState('');
   const [isCreatingInvite, setIsCreatingInvite] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
@@ -179,7 +188,13 @@ export default function Admin() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const code = generateInvitationCode();
-      const invitationLink = `${window.location.origin}/auth?invite=${code}`;
+      const invitationLink = `${window.location.origin}/auth?invite=${code}&signup=1`;
+
+      let maxRedemptions: number | null = null;
+      if (newInviteCampaign && newInviteMaxRedemptions.trim() !== '') {
+        const n = parseInt(newInviteMaxRedemptions, 10);
+        if (!Number.isNaN(n) && n > 0) maxRedemptions = n;
+      }
 
       // Create invitation in database
       const { error } = await supabase
@@ -188,7 +203,9 @@ export default function Admin() {
           code,
           email: newInviteEmail.trim() || null,
           name: newInviteName.trim() || null,
-          created_by: session?.user.id
+          created_by: session?.user.id,
+          invitation_kind: newInviteCampaign ? 'campaign' : 'individual',
+          max_redemptions: newInviteCampaign ? maxRedemptions : null,
         });
 
       if (error) throw error;
@@ -208,7 +225,10 @@ export default function Admin() {
               email: newInviteEmail.trim(),
               code,
               invitationLink
-            }
+            },
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
           });
 
           if (emailError) {
@@ -250,6 +270,8 @@ export default function Admin() {
 
       setNewInviteEmail('');
       setNewInviteName('');
+      setNewInviteCampaign(false);
+      setNewInviteMaxRedemptions('');
       setDialogOpen(false);
       fetchData();
     } catch (error: any) {
@@ -264,7 +286,7 @@ export default function Admin() {
   };
 
   const copyInvitationLink = (code: string) => {
-    const link = `${window.location.origin}/auth?invite=${code}`;
+    const link = `${window.location.origin}/auth?invite=${code}&signup=1`;
     navigator.clipboard.writeText(link);
     toast({
       title: 'Copied!',
@@ -339,7 +361,7 @@ export default function Admin() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const code = generateInvitationCode();
-      const invitationLink = `${window.location.origin}/auth?invite=${code}`;
+      const invitationLink = `${window.location.origin}/auth?invite=${code}&signup=1`;
 
       // Create invitation in database
       const { data: newInvitation, error: inviteError } = await supabase
@@ -377,9 +399,9 @@ export default function Admin() {
             code,
             invitationLink
           },
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : undefined,
         });
 
         if (emailError || emailData?.error) {
@@ -453,7 +475,14 @@ export default function Admin() {
             <Button variant="ghost" size="icon" onClick={() => navigate('/discover')}>
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <img src={kindlyLogo} alt="Kindly" className="h-8" />
+            <button
+              type="button"
+              onClick={() => navigateToLandingTop(navigate, location)}
+              className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="Kindly home"
+            >
+              <img src={kindlyLogo} alt="Kindly" className="h-8" />
+            </button>
             <span className="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
               Admin
             </span>
@@ -667,6 +696,35 @@ export default function Admin() {
                         placeholder="e.g., john@example.com"
                       />
                     </div>
+                    <div className="flex items-center justify-between gap-4 rounded-lg border border-border p-3">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="campaign-toggle" className="text-sm font-medium">
+                          Campaign / promo code
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Multi-use until expiry or max signups (leave max empty for unlimited).
+                        </p>
+                      </div>
+                      <Switch
+                        id="campaign-toggle"
+                        checked={newInviteCampaign}
+                        onCheckedChange={setNewInviteCampaign}
+                      />
+                    </div>
+                    {newInviteCampaign && (
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block">
+                          Max signups (optional)
+                        </label>
+                        <Input
+                          type="number"
+                          min={1}
+                          value={newInviteMaxRedemptions}
+                          onChange={(e) => setNewInviteMaxRedemptions(e.target.value)}
+                          placeholder="Unlimited if empty"
+                        />
+                      </div>
+                    )}
                     <Button
                       onClick={createInvitation}
                       disabled={isCreatingInvite}
@@ -684,6 +742,7 @@ export default function Admin() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Invitation</TableHead>
+                    <TableHead className="hidden lg:table-cell">Type / uses</TableHead>
                     <TableHead className="hidden sm:table-cell">Status</TableHead>
                     <TableHead className="hidden md:table-cell">Expires</TableHead>
                     <TableHead className="w-[100px]">Actions</TableHead>
@@ -701,6 +760,18 @@ export default function Admin() {
                             </p>
                           )}
                         </div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">
+                        {invitation.invitation_kind === 'campaign' ? (
+                          <span>
+                            Campaign · {invitation.redemption_count ?? 0}
+                            {invitation.max_redemptions != null
+                              ? ` / ${invitation.max_redemptions}`
+                              : ' / ∞'}
+                          </span>
+                        ) : (
+                          <span>Individual</span>
+                        )}
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">
                         {invitation.status === 'pending' && (
@@ -757,7 +828,7 @@ export default function Admin() {
                   ))}
                   {invitations.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                         No invitations yet
                       </TableCell>
                     </TableRow>
@@ -843,7 +914,7 @@ export default function Admin() {
                                 try {
                                   const { data: { session } } = await supabase.auth.getSession();
                                   const code = generateInvitationCode();
-                                  const link = `${window.location.origin}/auth?invite=${code}`;
+                                  const link = `${window.location.origin}/auth?invite=${code}&signup=1`;
 
                                   // Create invitation in database
                                   const { error: inviteError } = await supabase
