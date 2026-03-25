@@ -60,6 +60,38 @@ export interface Candidate {
  * Maps DB column names (drinking, profession, looking_for array) to Candidate format
  */
 export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
+  const calculateAge = (birthDateString: string | null | undefined): number | null => {
+    if (!birthDateString) return null;
+    const today = new Date();
+    const birthDate = new Date(birthDateString + 'T00:00:00');
+    if (Number.isNaN(birthDate.getTime())) return null;
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const birthYearValue = (profile as any).birth_year as number | string | null | undefined;
+  const computedAgeFromBirthYear = (() => {
+    if (birthYearValue === null || birthYearValue === undefined) return null;
+    const year = typeof birthYearValue === 'string' ? parseInt(birthYearValue, 10) : birthYearValue;
+    if (!year || Number.isNaN(year)) return null;
+    return new Date().getFullYear() - year;
+  })();
+
+  const computedAge =
+    (profile as any).birth_date
+      ? calculateAge((profile as any).birth_date as string | null | undefined)
+      : null;
+
+  const resolvedAge =
+    // If `age` is already populated, use it; otherwise fall back to computed age.
+    typeof profile.age === 'number' && profile.age > 0
+      ? profile.age
+      : (computedAge ?? computedAgeFromBirthYear ?? 0);
+
   const getFirstName = (name: string | null | undefined): string => {
     if (!name) return '';
     return name.split(' ')[0] || name;
@@ -106,7 +138,7 @@ export function mapProfileToCandidate(profile: CandidateProfile): Candidate {
     firstName,
     displayName: displayName || 'Unknown',
     gender: (profile.gender as 'male' | 'female' | 'non-binary') || 'non-binary',
-    age: profile.age ?? 0,
+    age: resolvedAge,
     city: profile.city || '',
     country: profile.country || '',
     nationality: profile.nationality || '',
