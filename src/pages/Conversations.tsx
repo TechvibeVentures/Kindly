@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MessageCircle, CheckCircle, Clock, ThumbsUp, ThumbsDown, Send, Circle, Check, ChevronDown } from 'lucide-react';
+import { ArrowLeft, MessageCircle, CheckCircle, Clock, ThumbsUp, ThumbsDown, Send, Circle, Check, ChevronDown, User } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,7 @@ export default function Conversations() {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState('');
   const [showTopics, setShowTopics] = useState(false);
+  const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
 
   useEffect(() => {
     if (conversations.length > 0 && !selectedConversation) {
@@ -93,15 +94,17 @@ export default function Conversations() {
 
   return (
     <div className="pb-24 md:pb-0">
-      {/* Mobile Header */}
-      <div className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur-sm px-4 py-3 border-b border-border">
-        <h1 className="text-xl font-bold">
-          {userRole === 'seeker' ? t.conversations : t.requests}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {conversations.length} {userRole === 'seeker' ? t.ongoingChats : t.requests.toLowerCase()}
-        </p>
-      </div>
+      {/* Mobile Header (list view only) */}
+      {!isMobileChatOpen && (
+        <div className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur-sm px-4 py-3 border-b border-border">
+          <h1 className="text-xl font-bold">
+            {userRole === 'seeker' ? t.conversations : t.requests}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {conversations.length} {userRole === 'seeker' ? t.ongoingChats : t.requests.toLowerCase()}
+          </p>
+        </div>
+      )}
 
       {/* Desktop Split View */}
       <div className="hidden md:flex h-[calc(100vh-64px)]">
@@ -326,63 +329,216 @@ export default function Conversations() {
         </div>
       </div>
 
-      {/* Mobile List View */}
-      <div className="md:hidden p-4 space-y-3">
-        {conversations.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto bg-secondary rounded-full flex items-center justify-center mb-4">
-              <MessageCircle className="w-8 h-8 text-muted-foreground" />
+      {/* Mobile List / Chat View */}
+      <div className={`md:hidden flex flex-col overflow-hidden min-h-0 ${isMobileChatOpen && selectedConv ? 'pt-16' : ''}`}>
+        {isMobileChatOpen && selectedConv ? (
+          <>
+            {/* Mobile Chat Header */}
+            <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md z-50 bg-background border-b border-border">
+              <div className="p-4 flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    setIsMobileChatOpen(false);
+                    setShowTopics(false);
+                  }}
+                  className="text-muted-foreground"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <div className="flex-shrink-0">
+                  {selectedConv.otherPhotoUrl ? (
+                    <img
+                      src={selectedConv.otherPhotoUrl}
+                      alt={selectedConv.otherDisplayName || ''}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                      <User className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h2 className="font-semibold">
+                    {userRole === 'seeker' ? selectedConv.otherDisplayName : selectedConv.seekerName}
+                  </h2>
+                </div>
+                <button
+                  onClick={() => setShowTopics(!showTopics)}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <span>
+                    {coveredByMeCount}/{totalTopics} {t.topicsCovered}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showTopics ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
             </div>
-            <h2 className="text-lg font-semibold mb-2">{t.noMatches}</h2>
-            <p className="text-muted-foreground mb-4">
-              {userRole === 'seeker' ? t.discover : t.requests}
-            </p>
-          </div>
-        ) : (
-          conversations.map((conversation, index) => {
-            const convCoveredCount = conversation.topics.filter(t => (conversation.isCurrentUserSeeker ? t.seekerCovered : t.candidateCovered)).length;
-            const photoUrl = conversation.otherPhotoUrl ?? null;
-            const displayName = userRole === 'seeker' ? conversation.otherDisplayName : conversation.seekerName;
-            
-            return (
-              <motion.button
-                key={conversation.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => navigate(`/conversation/${conversation.id}`)}
-                whileTap={{ scale: 0.98 }}
-                className="kindly-card w-full p-4 flex items-center gap-4 text-left"
-              >
-                {photoUrl ? (
-                  <img src={photoUrl} alt={displayName || ''} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
-                ) : (
-                  <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                    <MessageCircle className="w-7 h-7 text-muted-foreground" />
-                  </div>
-                )}
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold truncate">
-                      {displayName}
-                    </h3>
-                    {getStatusIcon(conversation.status)}
-                  </div>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {getConversationPreview(conversation)}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {convCoveredCount}/{conversation.topics.length} {t.topicsCovered}
-                  </p>
-                </div>
 
-                <div className="text-xs text-muted-foreground">
-                  {conversation.lastUpdated}
+            {showTopics && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="px-4 pb-3 bg-secondary/30"
+              >
+                <p className="text-sm text-muted-foreground py-2">{t.markTopicsAsCovered}</p>
+                <div className="flex flex-wrap gap-2">
+                  {selectedConv.topics.map((topic) => {
+                    const status = getTopicStatus(topic);
+                    const isCoveredByMe = selectedConv.isCurrentUserSeeker ? topic.seekerCovered : topic.candidateCovered;
+                    return (
+                      <button
+                        key={topic.id}
+                        onClick={() => {
+                          const isSeeker = selectedConv.isCurrentUserSeeker ?? (userRole === 'seeker');
+                          const currentCovered = isSeeker ? topic.seekerCovered : topic.candidateCovered;
+                          updateTopicMutation.mutate({
+                            conversationId: selectedConv.id,
+                            topicId: topic.id,
+                            isSeeker,
+                            covered: !currentCovered,
+                          });
+                        }}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm transition-colors ${
+                          status === 'covered'
+                            ? 'bg-success/20 text-success border border-success/30'
+                            : status === 'partial'
+                            ? 'bg-primary/20 text-primary border border-primary/30'
+                            : 'bg-secondary text-muted-foreground border border-border'
+                        }`}
+                      >
+                        {status === 'covered' ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : isCoveredByMe ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <Circle className="w-4 h-4" />
+                        )}
+                        {getTopicTranslation(topic)}
+                      </button>
+                    );
+                  })}
                 </div>
-              </motion.button>
-            );
-          })
+              </motion.div>
+            )}
+
+            {/* Messages (scroll only here). Extra bottom padding prevents overlap with fixed input/nav. */}
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 pb-32 space-y-3 scrollbar-hide">
+              {selectedConv.messages.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>{t.startConversation}</p>
+                </div>
+              ) : (
+                selectedConv.messages.map((message) => {
+                  const isMe = message.senderId === userRole;
+                  return (
+                    <div key={message.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                          isMe ? 'bg-primary text-primary-foreground' : 'bg-secondary'
+                        }`}
+                      >
+                        <p>{message.text}</p>
+                        <p
+                          className={`text-xs mt-1 ${
+                            isMe ? 'opacity-70' : 'text-muted-foreground'
+                          }`}
+                        >
+                          {new Date(message.timestamp).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Message Input (fixed so it doesn't move with scrolling) */}
+            <div
+              className="fixed left-1/2 -translate-x-1/2 w-full max-w-md p-4 border-t border-border bg-background z-60"
+              style={{ bottom: 'calc(4.75rem + env(safe-area-inset-bottom, 0px))' }}
+            >
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={t.typeMessage}
+                  className="flex-1 px-4 py-3 rounded-xl bg-secondary border-none focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <Button
+                  size="icon"
+                  className="h-12 w-12 rounded-xl"
+                  onClick={handleSend}
+                  disabled={!messageInput.trim()}
+                >
+                  <Send className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : (
+          // Mobile List
+          <>
+            {conversations.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 mx-auto bg-secondary rounded-full flex items-center justify-center mb-4">
+                  <MessageCircle className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h2 className="text-lg font-semibold mb-2">{t.noMatches}</h2>
+                <p className="text-muted-foreground mb-4">
+                  {userRole === 'seeker' ? t.discover : t.requests}
+                </p>
+              </div>
+            ) : (
+              <div className="p-4 space-y-3">
+                {conversations.map((conversation, index) => {
+                  const convCoveredCount = conversation.topics.filter(t => (conversation.isCurrentUserSeeker ? t.seekerCovered : t.candidateCovered)).length;
+                  const photoUrl = conversation.otherPhotoUrl ?? null;
+                  const displayName = userRole === 'seeker' ? conversation.otherDisplayName : conversation.seekerName;
+
+                  return (
+                    <motion.button
+                      key={conversation.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      onClick={() => {
+                        setSelectedConversation(conversation.id);
+                        setIsMobileChatOpen(true);
+                        setShowTopics(false);
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                      className="kindly-card w-full p-4 flex items-center gap-4 text-left"
+                    >
+                      {photoUrl ? (
+                        <img src={photoUrl} alt={displayName || ''} className="w-14 h-14 rounded-full object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                          <MessageCircle className="w-7 h-7 text-muted-foreground" />
+                        </div>
+                      )}
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold truncate">{displayName}</h3>
+                          {getStatusIcon(conversation.status)}
+                        </div>
+                        <p className="text-sm text-muted-foreground truncate">{getConversationPreview(conversation)}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {convCoveredCount}/{conversation.topics.length} {t.topicsCovered}
+                        </p>
+                      </div>
+
+                      <div className="text-xs text-muted-foreground">{conversation.lastUpdated}</div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
