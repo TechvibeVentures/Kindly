@@ -59,7 +59,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRoleState] = useState<UserRole>('seeker');
   const [currentUserPhotoUrl, setCurrentUserPhotoUrl] = useState<string | null>(null);
   const [shortlist, setShortlist] = useState<string[]>([]);
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
+  const FILTERS_STORAGE_KEY = 'kindley.discover.filters.v1';
+  const [filters, setFilters] = useState<Filters>(() => {
+    if (typeof window === 'undefined') return defaultFilters;
+    try {
+      const raw = window.localStorage.getItem(FILTERS_STORAGE_KEY);
+      if (!raw) return defaultFilters;
+      const parsed = JSON.parse(raw) as Partial<Filters>;
+      return {
+        ...defaultFilters,
+        ...parsed,
+        ageRange: Array.isArray(parsed.ageRange) && parsed.ageRange.length === 2 ? parsed.ageRange as [number, number] : defaultFilters.ageRange,
+        custodyRange: Array.isArray(parsed.custodyRange) && parsed.custodyRange.length === 2 ? parsed.custodyRange as [number, number] : defaultFilters.custodyRange,
+        location: typeof parsed.location === 'string' ? parsed.location : defaultFilters.location,
+        maxDistance: typeof parsed.maxDistance === 'number' ? parsed.maxDistance : defaultFilters.maxDistance,
+        openToRelocation: typeof parsed.openToRelocation === 'boolean' ? parsed.openToRelocation : defaultFilters.openToRelocation,
+        ethnicity: Array.isArray(parsed.ethnicity) ? parsed.ethnicity : defaultFilters.ethnicity,
+        languages: Array.isArray(parsed.languages) ? parsed.languages : defaultFilters.languages,
+        lookingFor: Array.isArray(parsed.lookingFor) ? parsed.lookingFor : defaultFilters.lookingFor,
+        gender: Array.isArray(parsed.gender) ? parsed.gender : defaultFilters.gender,
+      };
+    } catch {
+      return defaultFilters;
+    }
+  });
 
   const { data: profiles = [], isLoading: candidatesLoading } = useCandidates();
   const { data: currentUserProfile } = useCurrentUserProfile();
@@ -95,6 +118,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCurrentUserPhotoUrl(row?.photo_url ?? null);
       });
   }, [user]);
+
+  // Persist Discover filters so the last used parameters are restored.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
+    } catch {
+      // Ignore quota/private-mode errors.
+    }
+  }, [filters]);
 
   const setUserRole = useCallback(
     async (role: UserRole) => {
