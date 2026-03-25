@@ -154,6 +154,60 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const ageMin = filters.ageRange?.[0] ?? 25;
     const ageMax = filters.ageRange?.[1] ?? 50;
     const ageMatch = candidate.age === 0 || (candidate.age >= ageMin && candidate.age <= ageMax);
+
+    const location = filters.location?.trim().toLowerCase() ?? '';
+    const locationMatch = !location
+      ? true
+      : (() => {
+          const candidateCity = (candidate.city ?? '').toLowerCase();
+          const candidateCountry = (candidate.country ?? '').toLowerCase();
+          const combined = `${candidateCity}, ${candidateCountry}`.trim();
+
+          // Try direct match first (e.g. "Zurich, Switzerland")
+          if (combined.includes(location)) return true;
+
+          // Then try "City, Country" split (handles partial matches too)
+          const parts = location.split(',').map((p) => p.trim()).filter(Boolean);
+          const locCity = parts[0] ?? '';
+          const locCountry = parts[1] ?? '';
+
+          if (locCountry && candidateCountry.includes(locCountry)) return true;
+          if (!locCountry && locCity && candidateCity.includes(locCity)) return true;
+          if (locCity && locCountry) {
+            return candidateCity.includes(locCity) || candidateCountry.includes(locCountry);
+          }
+
+          return false;
+        })();
+
+    // We currently don't have geocoordinates, so distance is approximated as:
+    // - if close range (<150km): match by city (when provided), otherwise allow city or country
+    // - if far range: match by country (when provided), otherwise allow city or country
+    const dist = filters.maxDistance ?? 500;
+    const maxDistanceMatch = !location
+      ? true
+      : (() => {
+          const candidateCity = (candidate.city ?? '').toLowerCase();
+          const candidateCountry = (candidate.country ?? '').toLowerCase();
+          const parts = location.split(',').map((p) => p.trim()).filter(Boolean);
+          const locCity = parts[0] ?? '';
+          const locCountry = parts[1] ?? '';
+
+          const isClose = dist < 150;
+          if (isClose) {
+            if (locCity) return candidateCity.includes(locCity);
+            // If city isn't provided, fall back to country/city match
+            return locCountry ? candidateCountry.includes(locCountry) : true;
+          }
+
+          // Far range => country match if possible, else fallback to city match
+          if (locCountry) return candidateCountry.includes(locCountry);
+          if (locCity) return candidateCity.includes(locCity);
+          return true;
+        })();
+
+    const openToRelocationMatch = !filters.openToRelocation || candidate.openToRelocation === true;
+
     const ethnicityMatch = !filters.ethnicity?.length || 
       (candidate.ethnicity && filters.ethnicity.includes(candidate.ethnicity));
     const languageMatch = !filters.languages?.length || 
@@ -179,7 +233,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       !filters.gender?.length ||
       (candidate.gender && filters.gender.includes(candidate.gender));
 
-    return ageMatch && ethnicityMatch && languageMatch && lookingForMatch && custodyMatch && genderMatch;
+    return (
+      ageMatch &&
+      locationMatch &&
+      maxDistanceMatch &&
+      openToRelocationMatch &&
+      ethnicityMatch &&
+      languageMatch &&
+      lookingForMatch &&
+      custodyMatch &&
+      genderMatch
+    );
   }), [candidates, filters]);
 
   const getTopicStatus = (topic: Topic): 'none' | 'partial' | 'covered' => {
