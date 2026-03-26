@@ -1,4 +1,5 @@
 import type { Candidate } from '@/lib/utils/candidateMapper';
+import { useRef, useState } from 'react';
 import { ethnicityLabels, alcoholLabels, smokingLabels } from '@/lib/utils/candidateLabels';
 import { MapPin, Heart, Sparkles, Briefcase, Users, Wine, Cigarette, Globe, User } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -6,6 +7,7 @@ import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface CandidateCardProps {
   candidate: Candidate;
@@ -18,6 +20,13 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
   const { t } = useLanguage();
   const navigate = useNavigate();
   const inShortlist = isInShortlist(candidate.id);
+
+  // Mobile (list variant) uses a click-based popover for match description.
+  // Radix Tooltip can close immediately on touch devices, so we keep this separate
+  // from the desktop/grid tooltip behavior.
+  const [matchPopoverOpen, setMatchPopoverOpen] = useState(false);
+  const lastToggleDesiredOpenRef = useRef<boolean | null>(null);
+  const lastToggleAtRef = useRef<number>(0);
 
   const getEthnicityLabel = (value: string) => {
     return ethnicityLabels[value] || value;
@@ -91,7 +100,7 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
                   </span>
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="left" className="max-w-[min(320px,85vw)] text-xs leading-relaxed z-[60]">
+              <TooltipContent side="left" className="max-w-[min(320px,85vw)] text-xs leading-relaxed">
                 {t.matchScoreHowCalculated}
               </TooltipContent>
             </Tooltip>
@@ -211,11 +220,32 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent" />
         
         <div className="absolute top-3 right-3 z-10">
-          <Tooltip>
-            <TooltipTrigger asChild>
+          <Popover
+            open={matchPopoverOpen}
+            onOpenChange={(next) => {
+              // On touch devices we can briefly receive a "close" immediately after opening.
+              // If the user just tried to open it, ignore the transient close.
+              if (
+                next === false &&
+                lastToggleDesiredOpenRef.current === true &&
+                Date.now() - lastToggleAtRef.current < 300
+              ) {
+                return;
+              }
+              setMatchPopoverOpen(next);
+            }}
+          >
+            <PopoverTrigger asChild>
               <button
                 type="button"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const desired = !matchPopoverOpen;
+                  lastToggleDesiredOpenRef.current = desired;
+                  lastToggleAtRef.current = Date.now();
+                  setMatchPopoverOpen(desired);
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
                 className="flex items-center gap-1.5 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1.5 cursor-help border border-transparent hover:border-border text-left"
               >
                 <Sparkles className="w-4 h-4 text-primary shrink-0" />
@@ -223,11 +253,19 @@ export function CandidateCard({ candidate, index, variant = 'list' }: CandidateC
                   {candidate.compatibilityScore}% {t.match}
                 </span>
               </button>
-            </TooltipTrigger>
-            <TooltipContent side="left" className="max-w-[min(320px,85vw)] text-xs leading-relaxed z-[60]">
+            </PopoverTrigger>
+            <PopoverContent
+              // Mobile list: badge is top-right; side="left" opens toward the screen edge and clips.
+              // Open below and align to the trigger’s end so the panel stays inside the viewport.
+              side="bottom"
+              align="end"
+              sideOffset={8}
+              collisionPadding={12}
+              className="w-auto max-w-[min(320px,calc(100vw-1.5rem))] p-3 text-xs leading-relaxed"
+            >
               {t.matchScoreHowCalculated}
-            </TooltipContent>
-          </Tooltip>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 text-background">
