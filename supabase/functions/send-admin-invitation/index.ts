@@ -2,8 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+/** Must use an address on a domain verified in Resend (Dashboard → Domains). */
+const RESEND_FROM =
+  Deno.env.get("RESEND_FROM") ?? "Kindly <kindly@techvibe.ch>";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const corsHeaders = {
@@ -27,7 +29,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "Kindly <hello@impactfuel.ch>",
+      from: RESEND_FROM,
       to,
       subject,
       html,
@@ -57,7 +59,9 @@ serve(async (req: Request) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const supabaseUser = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    // Use the service role key to validate/lookup the caller via Supabase Auth.
+    // This avoids failures if SUPABASE_ANON_KEY is missing/mismatched for this function.
+    const supabaseUser = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       global: { headers: { Authorization: `Bearer ${token}` } },
     });
     const {

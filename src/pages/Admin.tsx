@@ -213,10 +213,20 @@ export default function Admin() {
       // Send invitation email if email is provided
       if (newInviteEmail.trim()) {
         try {
-          // Get current session for auth token
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session) {
-            throw new Error('Not authenticated');
+          // Refresh auth token to avoid Supabase rejecting stale/expired JWTs.
+          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+          const refreshedSession = refreshData.session;
+          const { data: sessionData } = await supabase.auth.getSession();
+          const session = refreshedSession ?? sessionData.session;
+
+          if (refreshError || !refreshedSession) {
+            // If refresh fails, continuing with the old access token causes "Invalid JWT".
+            // Force the user to re-auth instead of hitting the functions gateway with a stale token.
+            throw new Error('Session expired. Please sign in again.');
+          }
+          if (!session?.access_token) throw new Error('Not authenticated');
+          if (session.access_token.split('.').length !== 3) {
+            throw new Error('Invalid auth token format');
           }
 
           const { data: emailData, error: emailError } = await supabase.functions.invoke('send-admin-invitation', {
@@ -225,9 +235,6 @@ export default function Admin() {
               email: newInviteEmail.trim(),
               code,
               invitationLink
-            },
-            headers: {
-              Authorization: `Bearer ${session.access_token}`,
             },
           });
 
@@ -392,6 +399,20 @@ export default function Admin() {
 
       // Send invitation email
       try {
+        // Refresh auth token to avoid Supabase rejecting stale/expired JWTs.
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+        const refreshedSession = refreshData.session;
+        const { data: sessionData } = await supabase.auth.getSession();
+        const session = refreshedSession ?? sessionData.session;
+
+        if (refreshError || !refreshedSession) {
+          throw new Error('Session expired. Please sign in again.');
+        }
+        if (!session?.access_token) throw new Error('Not authenticated');
+        if (session.access_token.split('.').length !== 3) {
+          throw new Error('Invalid auth token format');
+        }
+
         const { data: emailData, error: emailError } = await supabase.functions.invoke('send-admin-invitation', {
           body: {
             name: request.name,
@@ -399,9 +420,6 @@ export default function Admin() {
             code,
             invitationLink
           },
-          headers: session?.access_token
-            ? { Authorization: `Bearer ${session.access_token}` }
-            : undefined,
         });
 
         if (emailError || emailData?.error) {

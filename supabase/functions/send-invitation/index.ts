@@ -2,6 +2,9 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+/** Must use an address on a domain verified in Resend (Dashboard → Domains). */
+const RESEND_FROM =
+  Deno.env.get("RESEND_FROM") ?? "Kindly <kindly@techvibe.ch>";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
@@ -28,7 +31,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "Kindly <hello@impactfuel.ch>",
+      from: RESEND_FROM,
       to,
       subject,
       html,
