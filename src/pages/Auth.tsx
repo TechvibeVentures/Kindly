@@ -150,25 +150,17 @@ export default function Auth() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!isMounted) return;
 
-      if (session && invitationCode) {
-        const { data: inviteRows } = await supabase.rpc('get_invitation_by_code', {
-          invite_code: invitationCode,
-        });
-        const inviteData = Array.isArray(inviteRows) ? (inviteRows[0] as InviteRow) : null;
-        if (
-          inviteData?.invitation_kind === 'individual' &&
-          (inviteData?.accepted_by === session.user.id || inviteData?.status === 'accepted')
-        ) {
-          checkOnboardingAndRedirect(session.user.id);
-          return;
-        }
-        if (inviteData?.invitation_kind === 'campaign' && inviteData?.user_has_redeemed) {
-          checkOnboardingAndRedirect(session.user.id);
-          return;
-        }
-      } else if (session && !invitationCode) {
+      if (!session) return;
+
+      // If session already exists (e.g. user just confirmed email via Supabase redirect),
+      // immediately route them into onboarding. If they have an invite code, try to accept it.
+      if (invitationCode) {
+        await supabase.rpc('accept_invitation', { invite_code: invitationCode }).catch(() => null);
         checkOnboardingAndRedirect(session.user.id);
+        return;
       }
+
+      checkOnboardingAndRedirect(session.user.id);
     });
 
     const {
@@ -358,11 +350,20 @@ export default function Auth() {
           throw new Error('Please enter your first name');
         }
 
+        const inviteCodeForRedirect = searchParams.get('invite');
+        const redirectInviteParam = inviteCodeForRedirect
+          ? `&invite=${encodeURIComponent(inviteCodeForRedirect)}`
+          : '';
+
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(),
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth?email=${encodeURIComponent(email.trim())}`,
+            // Preserve invite code so the user lands back on the correct auth screen.
+            // Also ensure `signup=1` so our UI shows the signup flow for invite-based onboarding.
+            emailRedirectTo: `${window.location.origin}/auth?email=${encodeURIComponent(
+              email.trim()
+            )}&signup=1${redirectInviteParam}`,
             data: {
               full_name: firstName.trim(),
             },
@@ -379,19 +380,6 @@ export default function Auth() {
           throw error;
         }
 
-        if (data.user) {
-          await supabase
-            .from('profiles')
-            .upsert(
-              {
-                user_id: data.user.id,
-                email: email.trim(),
-                first_name: firstName.trim(),
-              },
-              { onConflict: 'user_id' },
-            );
-        }
-
         const inviteCode = searchParams.get('invite');
         if (data.user && data.session && inviteCode) {
           await supabase.rpc('accept_invitation', { invite_code: inviteCode });
@@ -406,32 +394,13 @@ export default function Auth() {
             checkOnboardingAndRedirect(data.user!.id);
           }, 1000);
         } else {
-          setTimeout(async () => {
-            const { data: signInData } = await supabase.auth.signInWithPassword({
-              email: email.trim(),
-              password,
-            });
-
-            if (signInData?.session && signInData.user) {
-              if (inviteCode) {
-                await supabase.rpc('accept_invitation', { invite_code: inviteCode });
-              }
-              toast({
-                title: 'Account created!',
-                description: 'Welcome to Kindly. Redirecting to onboarding...',
-              });
-              setTimeout(() => {
-                checkOnboardingAndRedirect(signInData.user!.id);
-              }, 1000);
-            } else {
-              toast({
-                title: 'Account created!',
-                description: 'Please check your email to confirm your account, then log in.',
-              });
-              setIsLogin(true);
-              setEmail(email.trim());
-            }
-          }, 500);
+          // Email confirmation flow: wait for user to confirm first.
+          toast({
+            title: 'Account created!',
+            description: 'Please check your email to confirm your account, then log in.',
+          });
+          setIsLogin(true);
+          setEmail(email.trim());
         }
       }
     } catch (error: unknown) {
